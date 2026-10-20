@@ -4,9 +4,14 @@ import '../../../core/theme/app_colors.dart';
 import 'activity_card.dart';
 
 class FeaturedSection extends StatelessWidget {
-  const FeaturedSection({super.key, required this.searchQuery});
+  const FeaturedSection({
+    super.key,
+    required this.searchQuery,
+    required this.selectedCategory,
+  });
 
   final String searchQuery;
+  final String selectedCategory;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +28,18 @@ class FeaturedSection extends StatelessWidget {
         location: 'Jakarta Pusat',
         schedule: 'Sabtu, 16.00',
       ),
+      ActivityCard(
+        title: 'Basket Sore',
+        category: 'Basket',
+        location: 'Jakarta Selatan',
+        schedule: 'Jumat, 17.00',
+      ),
+      ActivityCard(
+        title: 'Lari Pagi Bareng',
+        category: 'Lari',
+        location: 'GBK, Jakarta',
+        schedule: 'Minggu, 06.00',
+      ),
     ];
 
     final query = searchQuery.trim().toLowerCase();
@@ -30,7 +47,11 @@ class FeaturedSection extends StatelessWidget {
       final searchableText =
           '${activity.title} ${activity.category} ${activity.location}'
               .toLowerCase();
-      return searchableText.contains(query);
+      final matchesCategory =
+          selectedCategory == 'Semua' ||
+          activity.category.toLowerCase() == selectedCategory.toLowerCase();
+
+      return matchesCategory && searchableText.contains(query);
     }).toList();
 
     return Column(

@@ -16,6 +16,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String _searchQuery = '';
+  String _selectedCategory = 'Semua';
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +33,17 @@ class _HomePageState extends State<HomePage> {
                 });
               },
             ),
-            const CategoryFilter(),
-            FeaturedSection(searchQuery: _searchQuery),
+            CategoryFilter(
+              onCategorySelected: (category) {
+                setState(() {
+                  _selectedCategory = category;
+                });
+              },
+            ),
+            FeaturedSection(
+              searchQuery: _searchQuery,
+              selectedCategory: _selectedCategory,
+            ),
             const PopularClubsSection(),
           ],
         ),

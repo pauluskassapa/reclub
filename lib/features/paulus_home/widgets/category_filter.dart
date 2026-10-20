@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 
 class CategoryFilter extends StatefulWidget {
-  const CategoryFilter({super.key});
+  const CategoryFilter({super.key, this.onCategorySelected});
+
+  final ValueChanged<String>? onCategorySelected;
 
   @override
   State<CategoryFilter> createState() => _CategoryFilterState();
@@ -44,6 +46,7 @@ class _CategoryFilterState extends State<CategoryFilter> {
               setState(() {
                 _selectedIndex = index;
               });
+              widget.onCategorySelected?.call(_categories[index]);
             },
           );
         },
