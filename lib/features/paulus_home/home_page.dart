@@ -5,6 +5,7 @@ import 'widgets/home_search_bar.dart';
 import 'widgets/category_filter.dart';
 import 'widgets/activity_card.dart';
 import 'widgets/featured_section.dart';
+import 'widgets/popular_clubs_section.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -20,6 +21,7 @@ class HomePage extends StatelessWidget {
             HomeSearchBar(),
             CategoryFilter(),
             FeaturedSection(),
+            PopularClubsSection(),
           ],
         ),
       ),
