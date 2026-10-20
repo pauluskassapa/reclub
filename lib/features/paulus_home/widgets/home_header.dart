@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 
 class HomeHeader extends StatelessWidget {
-  const HomeHeader({super.key});
+  const HomeHeader({super.key, required this.userName});
+
+  final String userName;
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +16,7 @@ class HomeHeader extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -29,7 +31,7 @@ class HomeHeader extends StatelessWidget {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      'Hai, Paulus Kassapa',
+                      'Hai, ${userName.trim().isEmpty ? 'Teman' : userName.trim()}',
                       style: TextStyle(
                         color: AppColors.text,
                         fontSize: 24,

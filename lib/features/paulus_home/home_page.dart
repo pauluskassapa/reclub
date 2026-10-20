@@ -13,7 +13,10 @@ import 'widgets/popular_clubs_section.dart';
 import 'widgets/sport_shortcut_section.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, this.userName = 'Teman'});
+
+  /// Display name supplied by the signed-in account when login is connected.
+  final String userName;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -46,7 +49,7 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: ListView(
           children: [
-            const HomeHeader(),
+            HomeHeader(userName: widget.userName),
             HomePromoCard(onDiscoverTap: _searchFocusNode.requestFocus),
             HomeSearchBar(
               controller: _searchController,
