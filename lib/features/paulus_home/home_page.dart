@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-
 import '../../core/theme/app_colors.dart';
 import 'widgets/home_header.dart';
+import 'widgets/home_search_bar.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
