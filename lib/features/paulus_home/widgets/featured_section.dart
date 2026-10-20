@@ -21,24 +21,28 @@ class FeaturedSection extends StatelessWidget {
         category: 'Sepak bola',
         location: 'Jakarta Selatan',
         schedule: 'Minggu, 08.00',
+        imagePath: 'assets/images/futsal.jpg',
       ),
       ActivityCard(
         title: 'Badminton Santai',
         category: 'Badminton',
         location: 'Jakarta Pusat',
         schedule: 'Sabtu, 16.00',
+        imagePath: 'assets/images/badminton.jpg',
       ),
       ActivityCard(
         title: 'Basket Sore',
         category: 'Basket',
         location: 'Jakarta Selatan',
         schedule: 'Jumat, 17.00',
+        imagePath: 'assets/images/basket.jpg',
       ),
       ActivityCard(
         title: 'Lari Pagi Bareng',
         category: 'Lari',
         location: 'GBK, Jakarta',
         schedule: 'Minggu, 06.00',
+        imagePath: 'assets/images/home_hero.jpg',
       ),
     ];
 

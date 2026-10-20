@@ -9,12 +9,14 @@ class ActivityCard extends StatelessWidget {
     required this.category,
     required this.location,
     required this.schedule,
+    required this.imagePath,
   });
 
   final String title;
   final String category;
   final String location;
   final String schedule;
+  final String imagePath;
 
   @override
   Widget build(BuildContext context) {
@@ -28,16 +30,13 @@ class ActivityCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: const Icon(
-                Icons.sports_soccer,
-                color: AppColors.primary,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(14),
+              child: Image.asset(
+                imagePath,
+                width: 76,
+                height: 76,
+                fit: BoxFit.cover,
               ),
             ),
             const SizedBox(width: 14),
