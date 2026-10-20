@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import 'activity_card.dart';
+import 'activity_time_filter.dart';
 
 class FeaturedSection extends StatelessWidget {
   const FeaturedSection({
     super.key,
     required this.searchQuery,
     required this.selectedCategory,
+    required this.selectedTime,
   });
 
   final String searchQuery;
   final String selectedCategory;
+  final String selectedTime;
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +25,9 @@ class FeaturedSection extends StatelessWidget {
         location: 'Jakarta Selatan',
         schedule: 'Minggu, 08.00',
         imagePath: 'assets/images/futsal.jpg',
+        timeGroup: ActivityTimeFilter.weekend,
+        participants: 8,
+        capacity: 12,
       ),
       ActivityCard(
         title: 'Badminton Santai',
@@ -29,6 +35,9 @@ class FeaturedSection extends StatelessWidget {
         location: 'Jakarta Pusat',
         schedule: 'Sabtu, 16.00',
         imagePath: 'assets/images/badminton.jpg',
+        timeGroup: ActivityTimeFilter.weekend,
+        participants: 5,
+        capacity: 8,
       ),
       ActivityCard(
         title: 'Basket Sore',
@@ -36,6 +45,9 @@ class FeaturedSection extends StatelessWidget {
         location: 'Jakarta Selatan',
         schedule: 'Jumat, 17.00',
         imagePath: 'assets/images/basket.jpg',
+        timeGroup: ActivityTimeFilter.weekday,
+        participants: 10,
+        capacity: 12,
       ),
       ActivityCard(
         title: 'Lari Pagi Bareng',
@@ -43,6 +55,9 @@ class FeaturedSection extends StatelessWidget {
         location: 'GBK, Jakarta',
         schedule: 'Minggu, 06.00',
         imagePath: 'assets/images/home_hero.jpg',
+        timeGroup: ActivityTimeFilter.weekend,
+        participants: 6,
+        capacity: 15,
       ),
     ];
 
@@ -54,8 +69,11 @@ class FeaturedSection extends StatelessWidget {
       final matchesCategory =
           selectedCategory == 'Semua' ||
           activity.category.toLowerCase() == selectedCategory.toLowerCase();
+      final matchesTime =
+          selectedTime == ActivityTimeFilter.all ||
+          activity.timeGroup == selectedTime;
 
-      return matchesCategory && searchableText.contains(query);
+      return matchesCategory && matchesTime && searchableText.contains(query);
     }).toList();
 
     return Column(

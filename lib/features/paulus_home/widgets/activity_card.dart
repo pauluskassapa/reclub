@@ -10,6 +10,9 @@ class ActivityCard extends StatelessWidget {
     required this.location,
     required this.schedule,
     required this.imagePath,
+    required this.timeGroup,
+    required this.participants,
+    required this.capacity,
   });
 
   final String title;
@@ -17,6 +20,9 @@ class ActivityCard extends StatelessWidget {
   final String location;
   final String schedule;
   final String imagePath;
+  final String timeGroup;
+  final int participants;
+  final int capacity;
 
   @override
   Widget build(BuildContext context) {
@@ -58,10 +64,25 @@ class ActivityCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     '$location · $schedule',
-                    style: const TextStyle(
-                      color: AppColors.text,
-                      fontSize: 12,
-                    ),
+                    style: const TextStyle(color: AppColors.text, fontSize: 12),
+                  ),
+                  const SizedBox(height: 5),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.people_alt_outlined,
+                        color: AppColors.primary,
+                        size: 15,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '$participants/$capacity peserta · ${capacity - participants} slot',
+                        style: const TextStyle(
+                          color: AppColors.mutedText,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

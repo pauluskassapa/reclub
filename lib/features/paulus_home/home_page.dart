@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
+import 'widgets/activity_time_filter.dart';
 import 'widgets/category_filter.dart';
 import 'widgets/featured_section.dart';
 import 'widgets/home_header.dart';
@@ -15,8 +16,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   String _selectedCategory = 'Semua';
+  String _selectedTime = 'Semua waktu';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +36,15 @@ class _HomePageState extends State<HomePage> {
           children: [
             const HomeHeader(),
             HomeSearchBar(
+              controller: _searchController,
               onChanged: (value) {
                 setState(() {
                   _searchQuery = value;
+                });
+              },
+              onClear: () {
+                setState(() {
+                  _searchQuery = '';
                 });
               },
             ),
@@ -40,9 +55,18 @@ class _HomePageState extends State<HomePage> {
                 });
               },
             ),
+            ActivityTimeFilter(
+              selectedTime: _selectedTime,
+              onTimeSelected: (time) {
+                setState(() {
+                  _selectedTime = time;
+                });
+              },
+            ),
             FeaturedSection(
               searchQuery: _searchQuery,
               selectedCategory: _selectedCategory,
+              selectedTime: _selectedTime,
             ),
             PopularClubsSection(searchQuery: _searchQuery),
           ],
