@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
               searchQuery: _searchQuery,
               selectedCategory: _selectedCategory,
             ),
-            const PopularClubsSection(),
+            PopularClubsSection(searchQuery: _searchQuery),
           ],
         ),
       ),
