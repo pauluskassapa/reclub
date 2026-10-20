@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../data/nearby_locations.dart';
 import '../data/sample_activities.dart';
 import '../models/activity.dart';
 import 'activity_card.dart';
@@ -12,17 +13,25 @@ class FeaturedSection extends StatelessWidget {
     required this.selectedCategory,
     required this.selectedTime,
     required this.selectedLocation,
+    required this.radiusKm,
   });
 
   final String searchQuery;
   final String selectedCategory;
   final ActivityTimeGroup? selectedTime;
   final String? selectedLocation;
+  final double radiusKm;
 
   @override
   Widget build(BuildContext context) {
     final query = searchQuery.trim().toLowerCase();
-    final locationQuery = selectedLocation?.toLowerCase();
+    NearbyLocation? location;
+    for (final item in nearbyLocations) {
+      if (item.name == selectedLocation) {
+        location = item;
+        break;
+      }
+    }
     final filteredActivities = sampleActivities.where((activity) {
       final searchableText =
           '${activity.title} ${activity.category} ${activity.location}'
@@ -33,8 +42,14 @@ class FeaturedSection extends StatelessWidget {
       final matchesTime =
           selectedTime == null || activity.timeGroup == selectedTime;
       final matchesLocation =
-          locationQuery == null ||
-          activity.location.toLowerCase().contains(locationQuery);
+          location == null ||
+          distanceInKm(
+                fromLatitude: location.latitude,
+                fromLongitude: location.longitude,
+                toLatitude: activity.latitude,
+                toLongitude: activity.longitude,
+              ) <=
+              radiusKm;
 
       return matchesCategory &&
           matchesTime &&

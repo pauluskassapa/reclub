@@ -26,6 +26,7 @@ class _HomePageState extends State<HomePage> {
   String _selectedCategory = 'Semua';
   ActivityTimeGroup? _selectedTime;
   String? _selectedLocation;
+  double _radiusKm = 20;
 
   @override
   void dispose() {
@@ -77,10 +78,14 @@ class _HomePageState extends State<HomePage> {
             ),
             ActivityLocationFilter(
               selectedLocation: _selectedLocation,
+              radiusKm: _radiusKm,
               onLocationSelected: (location) {
                 setState(() {
                   _selectedLocation = location;
                 });
+              },
+              onRadiusChanged: (radius) {
+                setState(() => _radiusKm = radius);
               },
             ),
             FeaturedSection(
@@ -88,8 +93,14 @@ class _HomePageState extends State<HomePage> {
               selectedCategory: _selectedCategory,
               selectedTime: _selectedTime,
               selectedLocation: _selectedLocation,
+              radiusKm: _radiusKm,
             ),
-            PopularClubsSection(searchQuery: _searchQuery),
+            PopularClubsSection(
+              searchQuery: _searchQuery,
+              selectedCategory: _selectedCategory,
+              selectedLocation: _selectedLocation,
+              radiusKm: _radiusKm,
+            ),
           ],
         ),
       ),
