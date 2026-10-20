@@ -6,11 +6,13 @@ class HomeSearchBar extends StatelessWidget {
   const HomeSearchBar({
     super.key,
     required this.controller,
+    this.focusNode,
     this.onChanged,
     this.onClear,
   });
 
   final TextEditingController controller;
+  final FocusNode? focusNode;
   final ValueChanged<String>? onChanged;
   final VoidCallback? onClear;
 
@@ -20,6 +22,7 @@ class HomeSearchBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: TextField(
         controller: controller,
+        focusNode: focusNode,
         onChanged: onChanged,
         decoration: InputDecoration(
           hintText: 'Cari klub atau kegiatan',

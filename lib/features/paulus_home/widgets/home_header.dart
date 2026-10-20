@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../core/theme/app_colors.dart';
 
 class HomeHeader extends StatelessWidget {
@@ -14,43 +15,50 @@ class HomeHeader extends StatelessWidget {
           Row(
             children: [
               const Expanded(
-                child: Text(
-                  'RECLUB',
-                  style: TextStyle(
-                    color: AppColors.primary,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'RECLUB',
+                      style: TextStyle(
+                        color: AppColors.primary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Hai, Paulus Kassapa',
+                      style: TextStyle(
+                        color: AppColors.text,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               CircleAvatar(
                 backgroundColor: AppColors.accent,
-                child: Icon(
-                  Icons.notifications_none,
-                  color: AppColors.text,
-                ),
+                child: Icon(Icons.notifications_none, color: AppColors.text),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           Text(
-            'Temukan teman untuk olahraga',
+            'Mau olahraga apa hari ini?',
             style: TextStyle(
-              color: AppColors.text,
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
+              color: AppColors.mutedText,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Cari klub dan kegiatan di sekitarmu.',
-            style: TextStyle(color: AppColors.mutedText),
           ),
           const SizedBox(height: 18),
           ClipRRect(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(22),
             child: SizedBox(
-              height: 170,
+              height: 178,
               width: double.infinity,
               child: Stack(
                 fit: StackFit.expand,
@@ -82,8 +90,8 @@ class HomeHeader extends StatelessWidget {
                           'Olahraga lebih seru kalau bareng komunitas.',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 18,
-                            height: 1.2,
+                            fontSize: 20,
+                            height: 1.15,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
