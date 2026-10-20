@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
+import 'models/activity.dart';
 import 'widgets/activity_time_filter.dart';
 import 'widgets/category_filter.dart';
 import 'widgets/featured_section.dart';
@@ -19,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   String _selectedCategory = 'Semua';
-  String _selectedTime = 'Semua waktu';
+  ActivityTimeGroup? _selectedTime;
 
   @override
   void dispose() {

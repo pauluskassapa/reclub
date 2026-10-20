@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../models/activity.dart';
 
 class ActivityTimeFilter extends StatelessWidget {
   const ActivityTimeFilter({
@@ -9,14 +10,14 @@ class ActivityTimeFilter extends StatelessWidget {
     required this.onTimeSelected,
   });
 
-  static const all = 'Semua waktu';
-  static const weekday = 'Hari kerja';
-  static const weekend = 'Akhir pekan';
+  static const _options = [
+    _TimeFilterOption('Semua waktu', null),
+    _TimeFilterOption('Hari kerja', ActivityTimeGroup.weekday),
+    _TimeFilterOption('Akhir pekan', ActivityTimeGroup.weekend),
+  ];
 
-  static const _options = [all, weekday, weekend];
-
-  final String selectedTime;
-  final ValueChanged<String> onTimeSelected;
+  final ActivityTimeGroup? selectedTime;
+  final ValueChanged<ActivityTimeGroup?> onTimeSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -43,17 +44,17 @@ class ActivityTimeFilter extends StatelessWidget {
             separatorBuilder: (_, __) => const SizedBox(width: 8),
             itemBuilder: (context, index) {
               final option = _options[index];
-              final isSelected = option == selectedTime;
+              final isSelected = option.value == selectedTime;
 
               return ChoiceChip(
-                label: Text(option),
+                label: Text(option.label),
                 selected: isSelected,
                 selectedColor: AppColors.secondary,
                 backgroundColor: AppColors.surface,
                 labelStyle: TextStyle(
                   color: isSelected ? Colors.white : AppColors.text,
                 ),
-                onSelected: (_) => onTimeSelected(option),
+                onSelected: (_) => onTimeSelected(option.value),
               );
             },
           ),
@@ -61,4 +62,11 @@ class ActivityTimeFilter extends StatelessWidget {
       ],
     );
   }
+}
+
+class _TimeFilterOption {
+  const _TimeFilterOption(this.label, this.value);
+
+  final String label;
+  final ActivityTimeGroup? value;
 }
