@@ -18,6 +18,12 @@ class _CategoryFilterState extends State<CategoryFilter> {
     'Basket',
     'Badminton',
     'Lari',
+    'Voli',
+    'Tenis',
+    'Sepeda',
+    'Renang',
+    'Yoga',
+    'Pingpong',
   ];
 
   int _selectedIndex = 0;
