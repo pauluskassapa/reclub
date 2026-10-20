@@ -66,7 +66,7 @@ class HomeHeader extends StatelessWidget {
                 fit: StackFit.expand,
                 children: [
                   Image.asset(
-                    'assets/images/home_hero.jpg',
+                    'assets/images/alexander_volleyball.jpg',
                     fit: BoxFit.cover,
                     alignment: Alignment.center,
                   ),
@@ -87,15 +87,31 @@ class HomeHeader extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.bottomLeft,
                       child: SizedBox(
-                        width: 230,
-                        child: Text(
-                          'Olahraga lebih seru kalau bareng komunitas.',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            height: 1.15,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        width: 240,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Dari Priok ke podium nasional',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                height: 1.05,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 6),
+                            Text(
+                              'Alexander juara voli setelah rutin berlatih bersama RECLUB.',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                                height: 1.15,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
