@@ -13,10 +13,22 @@ class PopularClubsSection extends StatelessWidget {
       _ClubCard(
         name: 'Jakarta Futsal Club',
         sport: 'Sepak bola · 128 anggota',
+        imagePath: 'assets/images/futsal.jpg',
       ),
       _ClubCard(
         name: 'Badminton Weekend',
         sport: 'Badminton · 86 anggota',
+        imagePath: 'assets/images/badminton.jpg',
+      ),
+      _ClubCard(
+        name: 'Basket Sore Jakarta',
+        sport: 'Basket · 64 anggota',
+        imagePath: 'assets/images/basket.jpg',
+      ),
+      _ClubCard(
+        name: 'Jakarta Morning Runners',
+        sport: 'Lari · 92 anggota',
+        imagePath: 'assets/images/home_hero.jpg',
       ),
     ];
 
@@ -51,10 +63,15 @@ class PopularClubsSection extends StatelessWidget {
 }
 
 class _ClubCard extends StatelessWidget {
-  const _ClubCard({required this.name, required this.sport});
+  const _ClubCard({
+    required this.name,
+    required this.sport,
+    required this.imagePath,
+  });
 
   final String name;
   final String sport;
+  final String imagePath;
 
   @override
   Widget build(BuildContext context) {
@@ -63,9 +80,15 @@ class _ClubCard extends StatelessWidget {
       child: Card(
         color: AppColors.surface,
         child: ListTile(
-          leading: const CircleAvatar(
-            backgroundColor: AppColors.accent,
-            child: Icon(Icons.groups, color: AppColors.text),
+          leading: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.asset(
+              imagePath,
+              width: 52,
+              height: 52,
+              fit: BoxFit.cover,
+              semanticLabel: name,
+            ),
           ),
           title: Text(name),
           subtitle: Text(sport),
