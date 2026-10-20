@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import 'models/activity.dart';
+import 'widgets/activity_location_filter.dart';
 import 'widgets/activity_time_filter.dart';
 import 'widgets/category_filter.dart';
 import 'widgets/featured_section.dart';
@@ -21,6 +22,7 @@ class _HomePageState extends State<HomePage> {
   String _searchQuery = '';
   String _selectedCategory = 'Semua';
   ActivityTimeGroup? _selectedTime;
+  String? _selectedLocation;
 
   @override
   void dispose() {
@@ -64,10 +66,19 @@ class _HomePageState extends State<HomePage> {
                 });
               },
             ),
+            ActivityLocationFilter(
+              selectedLocation: _selectedLocation,
+              onLocationSelected: (location) {
+                setState(() {
+                  _selectedLocation = location;
+                });
+              },
+            ),
             FeaturedSection(
               searchQuery: _searchQuery,
               selectedCategory: _selectedCategory,
               selectedTime: _selectedTime,
+              selectedLocation: _selectedLocation,
             ),
             PopularClubsSection(searchQuery: _searchQuery),
           ],

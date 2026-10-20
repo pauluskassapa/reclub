@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'features/paulus_home/home_page.dart';
 
 void main() {
@@ -14,6 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        fontFamily: 'Rajdhani',
         // This is the theme of your application.
         //
         // TRY THIS: Try running your application with "flutter run". You'll see
