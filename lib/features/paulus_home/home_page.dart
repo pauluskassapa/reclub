@@ -4,6 +4,7 @@ import 'widgets/home_header.dart';
 import 'widgets/home_search_bar.dart';
 import 'widgets/category_filter.dart';
 import 'widgets/activity_card.dart';
+import 'widgets/featured_section.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -18,12 +19,7 @@ class HomePage extends StatelessWidget {
             HomeHeader(),
             HomeSearchBar(),
             CategoryFilter(),
-            const ActivityCard(
-            title: 'Fun Futsal Bareng',
-            category: 'Sepak bola',
-            location: 'Jakarta Selatan',
-            schedule: 'Minggu, 08.00',
-            ),
+            FeaturedSection(),
           ],
         ),
       ),
