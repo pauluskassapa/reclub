@@ -15,7 +15,6 @@ import 'widgets/sport_shortcut_section.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key, this.userName = 'Teman'});
 
-  /// Display name supplied by the signed-in account when login is connected.
   final String userName;
 
   @override
@@ -97,12 +96,14 @@ class _HomePageState extends State<HomePage> {
               selectedTime: _selectedTime,
               selectedLocation: _selectedLocation,
               radiusKm: _radiusKm,
+              onClearFilters: _clearHomeFilters,
             ),
             PopularClubsSection(
               searchQuery: _searchQuery,
               selectedCategory: _selectedCategory,
               selectedLocation: _selectedLocation,
               radiusKm: _radiusKm,
+              onClearFilters: _clearHomeFilters,
             ),
           ],
         ),
@@ -124,5 +125,16 @@ class _HomePageState extends State<HomePage> {
           behavior: SnackBarBehavior.floating,
         ),
       );
+  }
+
+  void _clearHomeFilters() {
+    setState(() {
+      _searchQuery = '';
+      _searchController.clear();
+      _selectedCategory = 'Semua';
+      _selectedTime = null;
+      _selectedLocation = null;
+      _radiusKm = 20;
+    });
   }
 }

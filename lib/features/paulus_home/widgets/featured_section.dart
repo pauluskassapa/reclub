@@ -14,6 +14,7 @@ class FeaturedSection extends StatelessWidget {
     required this.selectedTime,
     required this.selectedLocation,
     required this.radiusKm,
+    required this.onClearFilters,
   });
 
   final String searchQuery;
@@ -21,6 +22,7 @@ class FeaturedSection extends StatelessWidget {
   final ActivityTimeGroup? selectedTime;
   final String? selectedLocation;
   final double radiusKm;
+  final VoidCallback onClearFilters;
 
   @override
   Widget build(BuildContext context) {
@@ -72,18 +74,63 @@ class FeaturedSection extends StatelessWidget {
           ),
         ),
         if (filteredActivities.isEmpty)
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Text(
-              'Kegiatan tidak ditemukan.',
-              style: TextStyle(color: AppColors.mutedText),
-            ),
-          )
+          _EmptyResults(onClearFilters: onClearFilters)
         else
           ...filteredActivities.map(
             (activity) => ActivityCard(activity: activity),
           ),
       ],
+    );
+  }
+}
+
+class _EmptyResults extends StatelessWidget {
+  const _EmptyResults({required this.onClearFilters});
+
+  final VoidCallback onClearFilters;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 8),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          children: [
+            const Icon(
+              Icons.search_off_rounded,
+              size: 34,
+              color: AppColors.primary,
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Belum ada kegiatan yang cocok',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppColors.text,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'Coba ubah kata kunci atau filter pencarianmu.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: AppColors.mutedText),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: onClearFilters,
+              icon: const Icon(Icons.filter_alt_off_outlined),
+              label: const Text('Hapus semua filter'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

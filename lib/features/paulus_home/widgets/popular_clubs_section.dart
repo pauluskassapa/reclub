@@ -10,12 +10,14 @@ class PopularClubsSection extends StatelessWidget {
     required this.selectedCategory,
     required this.selectedLocation,
     required this.radiusKm,
+    required this.onClearFilters,
   });
 
   final String searchQuery;
   final String selectedCategory;
   final String? selectedLocation;
   final double radiusKm;
+  final VoidCallback onClearFilters;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +50,7 @@ class PopularClubsSection extends StatelessWidget {
         name: 'Jakarta Morning Runners',
         category: 'Lari',
         sport: 'Lari · 92 anggota',
-        imagePath: 'assets/images/home_hero.jpg',
+        imagePath: 'assets/images/running.jpg',
         latitude: -6.218,
         longitude: 106.802,
       ),
@@ -56,7 +58,7 @@ class PopularClubsSection extends StatelessWidget {
         name: 'Voli Seru Jakarta Barat',
         category: 'Voli',
         sport: 'Voli · 48 anggota',
-        imagePath: 'assets/images/futsal.jpg',
+        imagePath: 'assets/images/volleyball.jpg',
         latitude: -6.168,
         longitude: 106.758,
       ),
@@ -64,7 +66,7 @@ class PopularClubsSection extends StatelessWidget {
         name: 'Jaksel Tennis Crew',
         category: 'Tenis',
         sport: 'Tenis · 35 anggota',
-        imagePath: 'assets/images/home_hero.jpg',
+        imagePath: 'assets/images/tennis.jpg',
         latitude: -6.275,
         longitude: 106.817,
       ),
@@ -72,7 +74,7 @@ class PopularClubsSection extends StatelessWidget {
         name: 'Gowes Bareng Timur',
         category: 'Sepeda',
         sport: 'Sepeda · 57 anggota',
-        imagePath: 'assets/images/home_hero.jpg',
+        imagePath: 'assets/images/cycling.jpg',
         latitude: -6.219,
         longitude: 106.900,
       ),
@@ -80,7 +82,7 @@ class PopularClubsSection extends StatelessWidget {
         name: 'Swim Buddies Jakarta',
         category: 'Renang',
         sport: 'Renang · 41 anggota',
-        imagePath: 'assets/images/badminton.jpg',
+        imagePath: 'assets/images/swimming.jpg',
         latitude: -6.128,
         longitude: 106.856,
       ),
@@ -88,7 +90,7 @@ class PopularClubsSection extends StatelessWidget {
         name: 'Yoga Pagi Pusat',
         category: 'Yoga',
         sport: 'Yoga · 62 anggota',
-        imagePath: 'assets/images/home_hero.jpg',
+        imagePath: 'assets/images/yoga.jpg',
         latitude: -6.1865,
         longitude: 106.8342,
       ),
@@ -96,7 +98,7 @@ class PopularClubsSection extends StatelessWidget {
         name: 'Pingpong Fun Club',
         category: 'Pingpong',
         sport: 'Pingpong · 29 anggota',
-        imagePath: 'assets/images/basket.jpg',
+        imagePath: 'assets/images/pingpong.jpg',
         latitude: -6.251,
         longitude: 106.823,
       ),
@@ -139,11 +141,38 @@ class PopularClubsSection extends StatelessWidget {
           ),
         ),
         if (filteredClubs.isEmpty)
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Text(
-              'Klub tidak ditemukan.',
-              style: TextStyle(color: AppColors.mutedText),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Column(
+                children: [
+                  const Text(
+                    'Klub tidak ditemukan',
+                    style: TextStyle(
+                      color: AppColors.text,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Coba ubah olahraga, daerah, atau kata kunci.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: AppColors.mutedText),
+                  ),
+                  const SizedBox(height: 10),
+                  OutlinedButton.icon(
+                    onPressed: onClearFilters,
+                    icon: const Icon(Icons.filter_alt_off_outlined),
+                    label: const Text('Hapus semua filter'),
+                  ),
+                ],
+              ),
             ),
           )
         else
