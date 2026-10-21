@@ -4,9 +4,10 @@ import '../../../core/theme/app_colors.dart';
 import '../models/activity.dart';
 
 class ActivityCard extends StatelessWidget {
-  const ActivityCard({super.key, required this.activity});
+  const ActivityCard({super.key, required this.activity, this.distanceKm});
 
   final Activity activity;
+  final double? distanceKm;
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +49,8 @@ class ActivityCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     '${activity.location} · ${activity.schedule}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(color: AppColors.text, fontSize: 12),
                   ),
                   const SizedBox(height: 5),
@@ -68,6 +71,26 @@ class ActivityCard extends StatelessWidget {
                       ),
                     ],
                   ),
+                  if (distanceKm != null) ...[
+                    const SizedBox(height: 5),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.near_me_outlined,
+                          color: AppColors.primary,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${distanceKm!.toStringAsFixed(1)} km dari area pilihan',
+                          style: const TextStyle(
+                            color: AppColors.mutedText,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),

@@ -59,6 +59,24 @@ class FeaturedSection extends StatelessWidget {
           searchableText.contains(query);
     }).toList();
 
+    if (location != null) {
+      filteredActivities.sort((first, second) {
+        final firstDistance = distanceInKm(
+          fromLatitude: location!.latitude,
+          fromLongitude: location.longitude,
+          toLatitude: first.latitude,
+          toLongitude: first.longitude,
+        );
+        final secondDistance = distanceInKm(
+          fromLatitude: location.latitude,
+          fromLongitude: location.longitude,
+          toLatitude: second.latitude,
+          toLongitude: second.longitude,
+        );
+        return firstDistance.compareTo(secondDistance);
+      });
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -76,9 +94,17 @@ class FeaturedSection extends StatelessWidget {
         if (filteredActivities.isEmpty)
           _EmptyResults(onClearFilters: onClearFilters)
         else
-          ...filteredActivities.map(
-            (activity) => ActivityCard(activity: activity),
-          ),
+          ...filteredActivities.map((activity) {
+            final distance = location == null
+                ? null
+                : distanceInKm(
+                    fromLatitude: location.latitude,
+                    fromLongitude: location.longitude,
+                    toLatitude: activity.latitude,
+                    toLongitude: activity.longitude,
+                  );
+            return ActivityCard(activity: activity, distanceKm: distance);
+          }),
       ],
     );
   }
