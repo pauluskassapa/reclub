@@ -52,14 +52,12 @@ Gaya bahasa:
 - Jika pengguna bertanya hal di luar topik olahraga, kesehatan fisik, atau kegiatan RECLUB, tolak dengan sopan dan arahkan kembali ke topik olahraga.
 ''';
 
-  /// quick promt
   static const List<String> quickPrompts = [
     'Apakah running shoes bisa dipakai untuk main Padel?',
     'Sepatu apa yang cocok untuk lapangan Futsal Vinyl Indoor?',
     'Tips pemanasan wajib agar tidak kram & cedera engkel',
     'Apa saja perlengkapan yang perlu dibawa ke Fun Futsal Bareng?',
   ];
-
 
   Future<String> sendMessage(
     String userPrompt, {

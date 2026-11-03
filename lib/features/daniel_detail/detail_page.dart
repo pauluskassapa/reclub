@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import 'widgets/detail_activity_info.dart';
+import 'widgets/detail_ai_chatbot.dart'; 
 import 'widgets/detail_category_chips.dart';
 import 'widgets/detail_image_header.dart';
 import 'widgets/detail_join_button.dart';
@@ -115,6 +116,7 @@ class _DetailPageState extends State<DetailPage> {
                   '10 menit agar semua peserta mendapat waktu bermain yang adil. '
                   'Bola, rompi tim, dan air mineral sudah disediakan.',
             ),
+            const DetailAiChatbotCard(),
             DetailParticipantList(
               participants: _participants,
               capacity: _capacity,
