@@ -7,6 +7,8 @@ import 'widgets/detail_category_chips.dart';
 import 'widgets/detail_image_header.dart';
 import 'widgets/detail_join_button.dart';
 import 'widgets/detail_participant_list.dart';
+import 'widgets/position_futsal.dart';
+
 
 class DetailPage extends StatefulWidget {
   const DetailPage({super.key});
@@ -36,20 +38,45 @@ class _DetailPageState extends State<DetailPage> {
   bool _isFavorite = false;
   bool _isJoined = false;
 
-  void _toggleJoinFutsal() {
-    setState(() {
-      if (_isJoined) {
+   Future<void> _toggleJoinFutsal() async {
+    if (_isJoined) {
+      setState(() {
         _participants.removeWhere((p) => p.name == 'Daniel (Kamu)');
         _isJoined = false;
-      } else if (_participants.length < _capacity) {
-        _participants.add(
-          const FutsalParticipant(
-            name: 'Daniel (Kamu)',
-            position: 'All-Rounder',
+      });
+
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('Keikutsertaan Fun Futsal Bareng dibatalkan.'),
+            behavior: SnackBarBehavior.floating,
           ),
         );
-        _isJoined = true;
-      }
+      return;
+    }
+
+    if (_participants.length >= _capacity) return;
+
+    final selectedPosition = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => DetailPositionSelectorSheet(
+        participants: _participants,
+      ),
+    );
+
+    if (selectedPosition == null || !mounted) return;
+
+    setState(() {
+      _participants.add(
+        FutsalParticipant(
+          name: 'Daniel (Kamu)',
+          position: selectedPosition,
+        ),
+      );
+      _isJoined = true;
     });
 
     ScaffoldMessenger.of(context)
@@ -57,9 +84,7 @@ class _DetailPageState extends State<DetailPage> {
       ..showSnackBar(
         SnackBar(
           content: Text(
-            _isJoined
-                ? 'Kamu berhasil bergabung ke Fun Futsal Bareng!'
-                : 'Keikutsertaan Fun Futsal Bareng dibatalkan.',
+            'Kamu bergabung ke Fun Futsal Bareng sebagai $selectedPosition!',
           ),
           behavior: SnackBarBehavior.floating,
         ),
