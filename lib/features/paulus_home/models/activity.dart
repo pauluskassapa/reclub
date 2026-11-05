@@ -10,8 +10,8 @@ class Activity {
     required this.timeGroup,
     required this.participants,
     required this.capacity,
-    required this.latitude,
-    required this.longitude,
+    this.latitude,
+    this.longitude,
   });
 
   final String title;
@@ -22,6 +22,6 @@ class Activity {
   final ActivityTimeGroup timeGroup;
   final int participants;
   final int capacity;
-  final double latitude;
-  final double longitude;
+  final double? latitude;
+  final double? longitude;
 }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../defrigo_manage_event/models/managed_event.dart';
+import '../defrigo_manage_event/pages/manage_event_page.dart';
+import 'data/managed_event_adapter.dart';
 import 'models/activity.dart';
 import 'widgets/activity_location_filter.dart';
 import 'widgets/activity_time_filter.dart';
@@ -29,6 +32,7 @@ class _HomePageState extends State<HomePage> {
   ActivityTimeGroup? _selectedTime;
   String? _selectedLocation;
   double _radiusKm = 20;
+  List<ManagedEvent> _managedEvents = const [];
 
   @override
   void dispose() {
@@ -97,6 +101,8 @@ class _HomePageState extends State<HomePage> {
               selectedLocation: _selectedLocation,
               radiusKm: _radiusKm,
               onClearFilters: _clearHomeFilters,
+              additionalActivities: managedEventsToActivities(_managedEvents),
+              onCreateActivity: _openManageEvents,
             ),
             PopularClubsSection(
               searchQuery: _searchQuery,
@@ -136,5 +142,20 @@ class _HomePageState extends State<HomePage> {
       _selectedLocation = null;
       _radiusKm = 20;
     });
+  }
+
+  Future<void> _openManageEvents() {
+    return Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => ManageEventPage(
+          initialEvents: _managedEvents,
+          onEventsChanged: _onEventsChanged,
+        ),
+      ),
+    );
+  }
+
+  void _onEventsChanged(List<ManagedEvent> events) {
+    setState(() => _managedEvents = List.unmodifiable(events));
   }
 }

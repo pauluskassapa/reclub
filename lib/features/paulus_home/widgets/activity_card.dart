@@ -54,23 +54,24 @@ class ActivityCard extends StatelessWidget {
                     style: const TextStyle(color: AppColors.text, fontSize: 12),
                   ),
                   const SizedBox(height: 5),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.people_alt_outlined,
-                        color: AppColors.primary,
-                        size: 15,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${activity.participants}/${activity.capacity} peserta · ${activity.capacity - activity.participants} slot',
-                        style: const TextStyle(
-                          color: AppColors.mutedText,
-                          fontSize: 11,
+                  if (activity.capacity > 0)
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.people_alt_outlined,
+                          color: AppColors.primary,
+                          size: 15,
                         ),
-                      ),
-                    ],
-                  ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${activity.participants}/${activity.capacity} peserta · ${activity.capacity - activity.participants} slot',
+                          style: const TextStyle(
+                            color: AppColors.mutedText,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
                   if (distanceKm != null) ...[
                     const SizedBox(height: 5),
                     Row(

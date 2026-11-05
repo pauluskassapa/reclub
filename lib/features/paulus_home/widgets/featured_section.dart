@@ -15,6 +15,8 @@ class FeaturedSection extends StatelessWidget {
     required this.selectedLocation,
     required this.radiusKm,
     required this.onClearFilters,
+    this.additionalActivities = const [],
+    required this.onCreateActivity,
   });
 
   final String searchQuery;
@@ -23,6 +25,8 @@ class FeaturedSection extends StatelessWidget {
   final String? selectedLocation;
   final double radiusKm;
   final VoidCallback onClearFilters;
+  final List<Activity> additionalActivities;
+  final VoidCallback onCreateActivity;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +38,8 @@ class FeaturedSection extends StatelessWidget {
         break;
       }
     }
-    final filteredActivities = sampleActivities.where((activity) {
+    final allActivities = [...sampleActivities, ...additionalActivities];
+    final filteredActivities = allActivities.where((activity) {
       final searchableText =
           '${activity.title} ${activity.category} ${activity.location}'
               .toLowerCase();
@@ -45,13 +50,15 @@ class FeaturedSection extends StatelessWidget {
           selectedTime == null || activity.timeGroup == selectedTime;
       final matchesLocation =
           location == null ||
-          distanceInKm(
-                fromLatitude: location.latitude,
-                fromLongitude: location.longitude,
-                toLatitude: activity.latitude,
-                toLongitude: activity.longitude,
-              ) <=
-              radiusKm;
+          (activity.latitude != null &&
+              activity.longitude != null &&
+              distanceInKm(
+                    fromLatitude: location.latitude,
+                    fromLongitude: location.longitude,
+                    toLatitude: activity.latitude!,
+                    toLongitude: activity.longitude!,
+                  ) <=
+                  radiusKm);
 
       return matchesCategory &&
           matchesTime &&
@@ -61,18 +68,10 @@ class FeaturedSection extends StatelessWidget {
 
     if (location != null) {
       filteredActivities.sort((first, second) {
-        final firstDistance = distanceInKm(
-          fromLatitude: location!.latitude,
-          fromLongitude: location.longitude,
-          toLatitude: first.latitude,
-          toLongitude: first.longitude,
-        );
-        final secondDistance = distanceInKm(
-          fromLatitude: location.latitude,
-          fromLongitude: location.longitude,
-          toLatitude: second.latitude,
-          toLongitude: second.longitude,
-        );
+        final firstDistance = _distanceFrom(location!, first);
+        final secondDistance = _distanceFrom(location, second);
+        if (firstDistance == null) return secondDistance == null ? 0 : 1;
+        if (secondDistance == null) return -1;
         return firstDistance.compareTo(secondDistance);
       });
     }
@@ -80,15 +79,26 @@ class FeaturedSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(20, 20, 20, 4),
-          child: Text(
-            'Kegiatan dekat kamu',
-            style: TextStyle(
-              color: AppColors.text,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
+          child: Row(
+            children: [
+              const Expanded(
+                child: Text(
+                  'Kegiatan dekat kamu',
+                  style: TextStyle(
+                    color: AppColors.text,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              TextButton.icon(
+                onPressed: onCreateActivity,
+                icon: const Icon(Icons.add_circle_outline),
+                label: const Text('Buat'),
+              ),
+            ],
           ),
         ),
         if (filteredActivities.isEmpty)
@@ -97,17 +107,24 @@ class FeaturedSection extends StatelessWidget {
           ...filteredActivities.map((activity) {
             final distance = location == null
                 ? null
-                : distanceInKm(
-                    fromLatitude: location.latitude,
-                    fromLongitude: location.longitude,
-                    toLatitude: activity.latitude,
-                    toLongitude: activity.longitude,
-                  );
+                : _distanceFrom(location, activity);
             return ActivityCard(activity: activity, distanceKm: distance);
           }),
       ],
     );
   }
+}
+
+double? _distanceFrom(NearbyLocation location, Activity activity) {
+  final latitude = activity.latitude;
+  final longitude = activity.longitude;
+  if (latitude == null || longitude == null) return null;
+  return distanceInKm(
+    fromLatitude: location.latitude,
+    fromLongitude: location.longitude,
+    toLatitude: latitude,
+    toLongitude: longitude,
+  );
 }
 
 class _EmptyResults extends StatelessWidget {
