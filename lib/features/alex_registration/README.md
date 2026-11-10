@@ -2,7 +2,7 @@
 
 Kerjakan alur pendaftaran atau ikut kegiatan di folder ini. Buat file utama `registration_page.dart` dan simpan komponen buatanmu di subfolder `widgets/`.
 
-Tahap awal mencakup formulir peserta, pilihan jadwal, dan pilihan lokasi.
+Fitur mencakup formulir peserta, pilihan jadwal, pilihan lokasi, informasi pembayaran, ringkasan, dan konfirmasi pendaftaran.
 
 Jangan mengubah `main.dart` atau file fitur anggota lain tanpa koordinasi. Integrasi navigasi dilakukan bersama setelah halaman tersedia.
 
@@ -20,4 +20,4 @@ Navigator.of(context).push(
 );
 ```
 
-Data kegiatan demo dapat disesuaikan melalui `activityName` dan `hostName`. Data jadwal dan lokasi saat ini berupa dummy di `registration_page.dart`.
+Data kegiatan demo dapat disesuaikan melalui `activityName`, `hostName`, dan `fee`. Isi `fee` dengan `0` untuk kegiatan gratis atau nominal rupiah untuk kegiatan berbayar. Data jadwal dan lokasi saat ini berupa dummy di `registration_page.dart`.

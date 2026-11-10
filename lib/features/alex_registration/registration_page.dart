@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import 'models/registration_option.dart';
+import 'widgets/confirmation_button.dart';
 import 'widgets/location_selector.dart';
 import 'widgets/participant_form.dart';
+import 'widgets/payment_section.dart';
+import 'widgets/registration_summary.dart';
 import 'widgets/schedule_selector.dart';
 
 class RegistrationPage extends StatefulWidget {
@@ -11,6 +14,7 @@ class RegistrationPage extends StatefulWidget {
     super.key,
     this.activityName = 'Latihan voli santai',
     this.hostName = 'Jakarta Volley Community',
+    this.fee = 0,
     this.participantName = '',
     this.participantEmail = '',
     this.participantPhone = '',
@@ -18,6 +22,7 @@ class RegistrationPage extends StatefulWidget {
 
   final String activityName;
   final String hostName;
+  final int fee;
   final String participantName;
   final String participantEmail;
   final String participantPhone;
@@ -27,11 +32,15 @@ class RegistrationPage extends StatefulWidget {
 }
 
 class _RegistrationPageState extends State<RegistrationPage> {
+  final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
   late final TextEditingController _emailController;
   late final TextEditingController _phoneController;
   int _selectedSchedule = 0;
   int _selectedLocation = 0;
+
+  RegistrationSchedule get _schedule => _schedules[_selectedSchedule];
+  RegistrationLocation get _location => _locations[_selectedLocation];
 
   static const _schedules = [
     RegistrationSchedule(title: 'Sabtu pagi', date: 'Sabtu, 14 November 2026', time: '08.00–10.00 WIB'),
@@ -50,15 +59,23 @@ class _RegistrationPageState extends State<RegistrationPage> {
     _nameController = TextEditingController(text: widget.participantName);
     _emailController = TextEditingController(text: widget.participantEmail);
     _phoneController = TextEditingController(text: widget.participantPhone);
+    _nameController.addListener(_refreshSummary);
+    _emailController.addListener(_refreshSummary);
+    _phoneController.addListener(_refreshSummary);
   }
 
   @override
   void dispose() {
+    _nameController.removeListener(_refreshSummary);
+    _emailController.removeListener(_refreshSummary);
+    _phoneController.removeListener(_refreshSummary);
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
     super.dispose();
   }
+
+  void _refreshSummary() => setState(() {});
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +97,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         centerTitle: false,
       ),
       body: Form(
+        key: _formKey,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 4, 20, 28),
@@ -103,8 +121,47 @@ class _RegistrationPageState extends State<RegistrationPage> {
               selectedIndex: _selectedLocation,
               onSelected: (index) => setState(() => _selectedLocation = index),
             ),
+            const SizedBox(height: 12),
+            PaymentSection(fee: widget.fee),
+            const SizedBox(height: 12),
+            RegistrationSummary(
+              name: _valueOrDash(_nameController.text),
+              email: _valueOrDash(_emailController.text),
+              phone: _valueOrDash(_phoneController.text),
+              schedule: _schedule,
+              location: _location,
+              fee: widget.fee,
+            ),
+            const SizedBox(height: 16),
+            ConfirmationButton(onPressed: _confirmRegistration),
           ],
         ),
+      ),
+    );
+  }
+
+  String _valueOrDash(String value) => value.trim().isEmpty ? '—' : value.trim();
+
+  void _confirmRegistration() {
+    if (!_formKey.currentState!.validate()) return;
+    FocusScope.of(context).unfocus();
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        icon: const Icon(Icons.check_circle, color: AppColors.primary, size: 40),
+        title: const Text('Pendaftaran berhasil'),
+        content: Text(
+          '${_nameController.text.trim()}, kamu terdaftar untuk ${widget.activityName} pada ${_schedule.label}.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).maybePop();
+            },
+            child: const Text('Selesai'),
+          ),
+        ],
       ),
     );
   }
