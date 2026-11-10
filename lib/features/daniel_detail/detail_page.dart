@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../paulus_home/models/activity.dart';
 import 'widgets/Position.dart';
-import 'widgets/detail_activity_info.dart';
 import 'widgets/ai_chatbot.dart';
+import 'widgets/detail_activity_info.dart';
 import 'widgets/detail_category_chips.dart';
+import 'widgets/detail_community_chat.dart';
 import 'widgets/detail_image_header.dart';
 import 'widgets/detail_join_button.dart';
 import 'widgets/detail_participant_list.dart';
@@ -27,6 +28,7 @@ class _DetailPageState extends State<DetailPage> {
 
   bool _isFavorite = false;
   bool _isJoined = false;
+  String _selectedRole = 'All-Rounder';
 
   _SportDetailConfig get _config {
     final isBasket = widget.activity?.category.toLowerCase() == 'basket' ||
@@ -82,6 +84,7 @@ class _DetailPageState extends State<DetailPage> {
           position: selectedPosition,
         ),
       );
+      _selectedRole = selectedPosition;
       _isJoined = true;
     });
 
@@ -151,6 +154,12 @@ class _DetailPageState extends State<DetailPage> {
               description: config.description,
             ),
             const DetailAiChatbotCard(),
+            DetailCommunityChatCard(
+              activityTitle: config.title,
+              clubName: config.clubName,
+              currentUserRole: _selectedRole,
+              isJoined: _isJoined,
+            ),
             DetailParticipantList(
               participants: participants,
               capacity: config.capacity,
