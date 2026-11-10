@@ -9,12 +9,14 @@ class DetailCategoryChips extends StatelessWidget {
     required this.timeGroup,
     required this.skillLevel,
     required this.courtType,
+    this.categoryIcon = Icons.sports_soccer_rounded,
   });
 
   final String category;
   final String timeGroup;
   final String skillLevel;
   final String courtType;
+  final IconData categoryIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class DetailCategoryChips extends StatelessWidget {
       child: Row(
         children: [
           _ChipItem(
-            icon: Icons.sports_soccer_rounded,
+            icon: categoryIcon,
             label: category,
             color: AppColors.primary,
           ),

@@ -12,6 +12,8 @@ class DetailActivityInfo extends StatelessWidget {
     required this.participantCount,
     required this.capacity,
     required this.description,
+    this.feeNote = 'Termasuk sewa lapangan, bola & rompi',
+    this.quotaTitle = 'Kuota Pemain Futsal',
   });
 
   final String schedule;
@@ -21,6 +23,8 @@ class DetailActivityInfo extends StatelessWidget {
   final int participantCount;
   final int capacity;
   final String description;
+  final String feeNote;
+  final String quotaTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +59,7 @@ class DetailActivityInfo extends StatelessWidget {
                 _InfoRow(
                   icon: Icons.payments_rounded,
                   title: 'Patungan Lapangan',
-                  subtitle: '$fee (Termasuk sewa lapangan, bola & rompi)',
+                  subtitle: '$fee ($feeNote)',
                 ),
                 const Divider(height: 22),
                 Column(
@@ -64,9 +68,9 @@ class DetailActivityInfo extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Kuota Pemain Futsal',
-                          style: TextStyle(
+                        Text(
+                          quotaTitle,
+                          style: const TextStyle(
                             color: AppColors.text,
                             fontWeight: FontWeight.w700,
                           ),

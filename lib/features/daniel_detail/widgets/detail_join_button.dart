@@ -9,12 +9,16 @@ class DetailJoinButton extends StatelessWidget {
     required this.isJoined,
     required this.isFull,
     required this.onPressed,
+    this.joinLabel = 'Ikut Futsal',
+    this.joinIcon = Icons.sports_soccer_rounded,
   });
 
   final String fee;
   final bool isJoined;
   final bool isFull;
   final VoidCallback onPressed;
+  final String joinLabel;
+  final IconData joinIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -76,15 +80,13 @@ class DetailJoinButton extends StatelessWidget {
                 elevation: 0,
               ),
               icon: Icon(
-                isJoined
-                    ? Icons.close_rounded
-                    : Icons.sports_soccer_rounded,
+                isJoined ? Icons.close_rounded : joinIcon,
                 size: 18,
               ),
               label: Text(
                 isJoined
                     ? 'Batalkan Ikut'
-                    : (disabled ? 'Slot Penuh' : 'Ikut Futsal'),
+                    : (disabled ? 'Slot Penuh' : joinLabel),
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,

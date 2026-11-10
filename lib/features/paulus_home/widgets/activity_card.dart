@@ -11,7 +11,9 @@ class ActivityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isFutsal = activity.title == 'Fun Futsal Bareng';
+    final bool hasDetail = activity.title == 'Fun Futsal Bareng' ||
+        activity.title == 'Basket Sore' ||
+        activity.category.toLowerCase() == 'basket';
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -20,11 +22,11 @@ class ActivityCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap: isFutsal
+          onTap: hasDetail
               ? () {
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
-                      builder: (_) => const DetailPage(),
+                      builder: (_) => DetailPage(activity: activity),
                     ),
                   );
                 }
@@ -87,7 +89,7 @@ class ActivityCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (isFutsal)
+                if (hasDetail)
                   const Icon(
                     Icons.chevron_right_rounded,
                     color: AppColors.primary,

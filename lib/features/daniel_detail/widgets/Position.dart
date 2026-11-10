@@ -17,12 +17,21 @@ class DetailPositionSelectorSheet extends StatefulWidget {
   const DetailPositionSelectorSheet({
     super.key,
     required this.participants,
+    this.roleOptions = futsalRoles,
+    this.activityTitle = 'Fun Futsal Bareng',
+    this.headerIcon = Icons.sports_soccer_rounded,
   });
 
   final List<FutsalParticipant> participants;
+  final List<FutsalRoleOption> roleOptions;
+  final String activityTitle;
+  final IconData headerIcon;
 
-  //role pemain
-  static const List<FutsalRoleOption> roles = [
+  // Alias agar kompatibel dengan pemanggilan lama
+  static const List<FutsalRoleOption> roles = futsalRoles;
+
+  // Buat role pemain futsal
+  static const List<FutsalRoleOption> futsalRoles = [
     FutsalRoleOption(
       name: 'Kiper',
       icon: Icons.pan_tool_rounded,
@@ -49,6 +58,34 @@ class DetailPositionSelectorSheet extends StatefulWidget {
     ),
   ];
 
+  // Buat role pemain basket (5 posisi utama + All-Rounder)
+  static const List<FutsalRoleOption> basketRoles = [
+    FutsalRoleOption(
+      name: 'Point Guard (PG)',
+      icon: Icons.sports_basketball_rounded,
+    ),
+    FutsalRoleOption(
+      name: 'Shooting Guard (SG)',
+      icon: Icons.gps_fixed_rounded,
+    ),
+    FutsalRoleOption(
+      name: 'Small Forward (SF)',
+      icon: Icons.bolt_rounded,
+    ),
+    FutsalRoleOption(
+      name: 'Power Forward (PF)',
+      icon: Icons.fitness_center_rounded,
+    ),
+    FutsalRoleOption(
+      name: 'Center (C)',
+      icon: Icons.shield_rounded,
+    ),
+    FutsalRoleOption(
+      name: 'All-Rounder',
+      icon: Icons.autorenew_rounded,
+    ),
+  ];
+
   @override
   State<DetailPositionSelectorSheet> createState() =>
       _DetailPositionSelectorSheetState();
@@ -56,7 +93,9 @@ class DetailPositionSelectorSheet extends StatefulWidget {
 
 class _DetailPositionSelectorSheetState
     extends State<DetailPositionSelectorSheet> {
-  String _selectedRole = DetailPositionSelectorSheet.roles.last.name;
+  String? _selectedRole;
+
+  String get _currentRole => _selectedRole ?? widget.roleOptions.last.name;
 
   Map<String, int> _buildPositionCounts() {
     final counts = <String, int>{};
@@ -69,6 +108,7 @@ class _DetailPositionSelectorSheetState
   @override
   Widget build(BuildContext context) {
     final positionCounts = _buildPositionCounts();
+    final selectedRole = _currentRole;
 
     return Container(
       constraints: BoxConstraints(
@@ -102,18 +142,18 @@ class _DetailPositionSelectorSheetState
                       color: AppColors.primary.withValues(alpha: 0.14),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(
-                      Icons.sports_soccer_rounded,
+                    child: Icon(
+                      widget.headerIcon,
                       color: AppColors.primary,
                       size: 22,
                     ),
                   ),
                   const SizedBox(width: 12),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'Pilih Posisi Bermain',
                           style: TextStyle(
                             color: AppColors.text,
@@ -122,8 +162,8 @@ class _DetailPositionSelectorSheetState
                           ),
                         ),
                         Text(
-                          'Tentukan role kamu di sesi Fun Futsal Bareng',
-                          style: TextStyle(
+                          'Tentukan role kamu di sesi ${widget.activityTitle}',
+                          style: const TextStyle(
                             color: AppColors.mutedText,
                             fontSize: 13,
                           ),
@@ -146,11 +186,11 @@ class _DetailPositionSelectorSheetState
               child: ListView.separated(
                 shrinkWrap: true,
                 padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
-                itemCount: DetailPositionSelectorSheet.roles.length,
+                itemCount: widget.roleOptions.length,
                 separatorBuilder: (_, _) => const SizedBox(height: 10),
                 itemBuilder: (context, index) {
-                  final role = DetailPositionSelectorSheet.roles[index];
-                  final isSelected = _selectedRole == role.name;
+                  final role = widget.roleOptions[index];
+                  final isSelected = selectedRole == role.name;
                   final count = positionCounts[role.name] ?? 0;
 
                   return InkWell(
@@ -197,12 +237,14 @@ class _DetailPositionSelectorSheetState
                               children: [
                                 Row(
                                   children: [
-                                    Text(
-                                      role.name,
-                                      style: const TextStyle(
-                                        color: AppColors.text,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w700,
+                                    Flexible(
+                                      child: Text(
+                                        role.name,
+                                        style: const TextStyle(
+                                          color: AppColors.text,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700,
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(width: 8),
@@ -234,14 +276,6 @@ class _DetailPositionSelectorSheetState
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 3),
-                                Text(
-                                  style: const TextStyle(
-                                    color: AppColors.mutedText,
-                                    fontSize: 12.5,
-                                    height: 1.3,
-                                  ),
-                                ),
                               ],
                             ),
                           ),
@@ -268,7 +302,7 @@ class _DetailPositionSelectorSheetState
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: () => Navigator.of(context).pop(_selectedRole),
+                  onPressed: () => Navigator.of(context).pop(selectedRole),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
@@ -280,7 +314,7 @@ class _DetailPositionSelectorSheetState
                   ),
                   icon: const Icon(Icons.check_rounded, size: 20),
                   label: Text(
-                    'Konfirmasi Posisi: $_selectedRole',
+                    'Konfirmasi Posisi: $selectedRole',
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
