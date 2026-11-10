@@ -2,20 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import 'models/registration_option.dart';
-import 'widgets/confirmation_button.dart';
 import 'widgets/location_selector.dart';
 import 'widgets/participant_form.dart';
-import 'widgets/payment_section.dart';
-import 'widgets/registration_summary.dart';
 import 'widgets/schedule_selector.dart';
 
-/// Standalone registration flow for joining a Reclub activity.
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({
     super.key,
     this.activityName = 'Latihan voli santai',
     this.hostName = 'Jakarta Volley Community',
-    this.fee = 0,
     this.participantName = '',
     this.participantEmail = '',
     this.participantPhone = '',
@@ -23,7 +18,6 @@ class RegistrationPage extends StatefulWidget {
 
   final String activityName;
   final String hostName;
-  final int fee;
   final String participantName;
   final String participantEmail;
   final String participantPhone;
@@ -33,7 +27,6 @@ class RegistrationPage extends StatefulWidget {
 }
 
 class _RegistrationPageState extends State<RegistrationPage> {
-  final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
   late final TextEditingController _emailController;
   late final TextEditingController _phoneController;
@@ -57,29 +50,18 @@ class _RegistrationPageState extends State<RegistrationPage> {
     _nameController = TextEditingController(text: widget.participantName);
     _emailController = TextEditingController(text: widget.participantEmail);
     _phoneController = TextEditingController(text: widget.participantPhone);
-    _nameController.addListener(_refreshSummary);
-    _emailController.addListener(_refreshSummary);
-    _phoneController.addListener(_refreshSummary);
   }
 
   @override
   void dispose() {
-    _nameController.removeListener(_refreshSummary);
-    _emailController.removeListener(_refreshSummary);
-    _phoneController.removeListener(_refreshSummary);
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
     super.dispose();
   }
 
-  void _refreshSummary() => setState(() {});
-
   @override
   Widget build(BuildContext context) {
-    final schedule = _schedules[_selectedSchedule];
-    final location = _locations[_selectedLocation];
-
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -98,7 +80,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         centerTitle: false,
       ),
       body: Form(
-        key: _formKey,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 4, 20, 28),
           children: [
@@ -121,45 +103,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
               selectedIndex: _selectedLocation,
               onSelected: (index) => setState(() => _selectedLocation = index),
             ),
-            const SizedBox(height: 12),
-            PaymentSection(fee: widget.fee),
-            const SizedBox(height: 12),
-            RegistrationSummary(
-              name: _nameController.text.trim().isEmpty ? '—' : _nameController.text.trim(),
-              email: _emailController.text.trim().isEmpty ? '—' : _emailController.text.trim(),
-              phone: _phoneController.text.trim().isEmpty ? '—' : _phoneController.text.trim(),
-              schedule: schedule,
-              location: location,
-              fee: widget.fee,
-            ),
-            const SizedBox(height: 16),
-            ConfirmationButton(onPressed: _confirmRegistration),
           ],
         ),
-      ),
-    );
-  }
-
-  void _confirmRegistration() {
-    if (!_formKey.currentState!.validate()) return;
-    FocusScope.of(context).unfocus();
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        icon: const Icon(Icons.check_circle, color: AppColors.primary, size: 40),
-        title: const Text('Pendaftaran berhasil'),
-        content: Text(
-          '${_nameController.text.trim()}, kamu terdaftar untuk ${widget.activityName} pada ${_schedules[_selectedSchedule].label}.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).maybePop();
-            },
-            child: const Text('Selesai'),
-          ),
-        ],
       ),
     );
   }
