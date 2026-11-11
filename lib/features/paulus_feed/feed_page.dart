@@ -1,64 +1,117 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
+import 'models/feed_post.dart';
+import 'services/feed_service.dart';
 import 'widgets/feed_post_card.dart';
 
-class FeedPage extends StatelessWidget {
-  const FeedPage({super.key});
+class FeedPage extends StatefulWidget {
+  const FeedPage({super.key, this.service = const FeedService()});
+
+  final FeedService service;
+
+  @override
+  State<FeedPage> createState() => _FeedPageState();
+}
+
+class _FeedPageState extends State<FeedPage> {
+  List<FeedPost> _posts = [];
+  bool _loading = true;
+  bool _failed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPosts();
+  }
+
+  Future<void> _loadPosts() async {
+    setState(() {
+      _loading = true;
+      _failed = false;
+    });
+    try {
+      final posts = await widget.service.fetchPosts();
+      if (!mounted) return;
+      setState(() {
+        _posts = posts;
+        _loading = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _failed = true;
+        _loading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      key: const PageStorageKey('feed'),
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
-      children: const [
-        Text(
-          'Feed',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: AppColors.text,
+    return RefreshIndicator(
+      onRefresh: () async {
+        if (!_loading) await _loadPosts();
+      },
+      child: ListView(
+        key: const PageStorageKey('feed'),
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+        children: [
+          const Text(
+            'Feed',
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: AppColors.text,
+            ),
           ),
-        ),
-        SizedBox(height: 4),
-        Text(
-          'Kabar dari komunitas olahraga',
-          style: TextStyle(color: AppColors.mutedText),
-        ),
-        SizedBox(height: 8),
-        Text(
-          'Postingan contoh komunitas',
-          style: TextStyle(fontSize: 12, color: AppColors.mutedText),
-        ),
-        SizedBox(height: 16),
-        FeedPostCard(
-          club: 'Jakarta Futsal Club',
-          initials: 'JF',
-          category: 'Futsal',
-          title: 'Main bareng akhir pekan',
-          message: 'Latihan lebih seru kalau bareng teman! Yuk, siapkan sepatu dan ajak tim kamu untuk main futsal akhir pekan ini.',
-          imagePath: 'assets/images/futsal.jpg',
-          likes: 24,
-        ),
-        FeedPostCard(
-          club: 'Badminton Weekend',
-          initials: 'BW',
-          category: 'Badminton',
-          title: 'Pemula juga boleh ikut',
-          message: 'Tidak perlu jago dulu untuk mulai bermain. Di komunitas ini kita latihan, belajar teknik dasar, dan saling menyemangati.',
-          imagePath: 'assets/images/badminton.jpg',
-          likes: 18,
-        ),
-        FeedPostCard(
-          club: 'Jakarta Morning Runners',
-          initials: 'JR',
-          category: 'Lari',
-          title: 'Mulai dari langkah kecil',
-          message: 'Lari santai, pemanasan dulu, dan jangan lupa bawa air minum. Nikmati prosesnya bersama teman-teman komunitas.',
-          imagePath: 'assets/images/running.jpg',
-          likes: 31,
-        ),
-      ],
+          const SizedBox(height: 4),
+          const Text(
+            'Kabar dari komunitas olahraga',
+            style: TextStyle(color: AppColors.mutedText),
+          ),
+          const SizedBox(height: 16),
+          if (_loading) const LinearProgressIndicator(),
+          if (_failed)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: Column(
+                children: [
+                  const Icon(
+                    Icons.cloud_off_outlined,
+                    color: AppColors.mutedText,
+                  ),
+                  const SizedBox(height: 8),
+                  const Text('Feed belum bisa dimuat. Coba lagi sebentar.'),
+                  TextButton(
+                    onPressed: _loadPosts,
+                    child: const Text('Coba lagi'),
+                  ),
+                ],
+              ),
+            ),
+          if (!_loading && !_failed && _posts.isEmpty)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 32),
+              child: Text(
+                'Belum ada kabar komunitas. Tarik ke bawah untuk memperbarui.',
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ..._posts.map(
+            (post) => FeedPostCard(
+              key: ValueKey(post.id),
+              club: post.club,
+              initials: post.initials,
+              category: post.category,
+              title: post.title,
+              message: post.message,
+              imagePath: post.imagePath,
+              likes: post.likes,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
