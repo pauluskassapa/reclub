@@ -5,6 +5,7 @@ import '../defrigo_manage_event/models/managed_event.dart';
 import '../defrigo_manage_event/pages/manage_event_page.dart';
 import 'data/managed_event_adapter.dart';
 import 'models/activity.dart';
+import '../paulus_feed/feed_page.dart';
 import 'widgets/activity_location_filter.dart';
 import 'widgets/activity_time_filter.dart';
 import 'widgets/featured_section.dart';
@@ -27,6 +28,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
+  int _selectedTab = 0;
   String _searchQuery = '';
   String _selectedCategory = 'Semua';
   ActivityTimeGroup? _selectedTime;
@@ -47,78 +49,99 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: AppColors.background,
       bottomNavigationBar: HomeBottomNavigation(
         onDestinationSelected: _onDestinationSelected,
-        onSearchPressed: _searchFocusNode.requestFocus,
+        selectedIndex: _selectedTab,
+        onSearchPressed: _showHomeSearch,
       ),
       body: SafeArea(
-        child: ListView(
+        child: IndexedStack(
+          index: _selectedTab,
           children: [
-            HomeHeader(userName: widget.userName),
-            HomePromoCard(onDiscoverTap: _searchFocusNode.requestFocus),
-            HomeSearchBar(
-              controller: _searchController,
-              focusNode: _searchFocusNode,
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
-              onClear: () {
-                setState(() {
-                  _searchQuery = '';
-                });
-              },
+            ListView(
+              key: const PageStorageKey('home'),
+              children: [
+                HomeHeader(userName: widget.userName),
+                HomePromoCard(onDiscoverTap: _searchFocusNode.requestFocus),
+                HomeSearchBar(
+                  controller: _searchController,
+                  focusNode: _searchFocusNode,
+                  onChanged: (value) {
+                    setState(() {
+                      _searchQuery = value;
+                    });
+                  },
+                  onClear: () {
+                    setState(() {
+                      _searchQuery = '';
+                    });
+                  },
+                ),
+                SportShortcutSection(
+                  selectedCategory: _selectedCategory,
+                  onCategorySelected: (category) {
+                    setState(() => _selectedCategory = category);
+                  },
+                ),
+                ActivityTimeFilter(
+                  selectedTime: _selectedTime,
+                  onTimeSelected: (time) {
+                    setState(() {
+                      _selectedTime = time;
+                    });
+                  },
+                ),
+                ActivityLocationFilter(
+                  selectedLocation: _selectedLocation,
+                  radiusKm: _radiusKm,
+                  onLocationSelected: (location) {
+                    setState(() {
+                      _selectedLocation = location;
+                    });
+                  },
+                  onRadiusChanged: (radius) {
+                    setState(() => _radiusKm = radius);
+                  },
+                ),
+                FeaturedSection(
+                  searchQuery: _searchQuery,
+                  selectedCategory: _selectedCategory,
+                  selectedTime: _selectedTime,
+                  selectedLocation: _selectedLocation,
+                  radiusKm: _radiusKm,
+                  onClearFilters: _clearHomeFilters,
+                  additionalActivities: managedEventsToActivities(
+                    _managedEvents,
+                  ),
+                  onCreateActivity: _openManageEvents,
+                ),
+                PopularClubsSection(
+                  searchQuery: _searchQuery,
+                  selectedCategory: _selectedCategory,
+                  selectedLocation: _selectedLocation,
+                  radiusKm: _radiusKm,
+                  onClearFilters: _clearHomeFilters,
+                ),
+              ],
             ),
-            SportShortcutSection(
-              selectedCategory: _selectedCategory,
-              onCategorySelected: (category) {
-                setState(() => _selectedCategory = category);
-              },
-            ),
-            ActivityTimeFilter(
-              selectedTime: _selectedTime,
-              onTimeSelected: (time) {
-                setState(() {
-                  _selectedTime = time;
-                });
-              },
-            ),
-            ActivityLocationFilter(
-              selectedLocation: _selectedLocation,
-              radiusKm: _radiusKm,
-              onLocationSelected: (location) {
-                setState(() {
-                  _selectedLocation = location;
-                });
-              },
-              onRadiusChanged: (radius) {
-                setState(() => _radiusKm = radius);
-              },
-            ),
-            FeaturedSection(
-              searchQuery: _searchQuery,
-              selectedCategory: _selectedCategory,
-              selectedTime: _selectedTime,
-              selectedLocation: _selectedLocation,
-              radiusKm: _radiusKm,
-              onClearFilters: _clearHomeFilters,
-              additionalActivities: managedEventsToActivities(_managedEvents),
-              onCreateActivity: _openManageEvents,
-            ),
-            PopularClubsSection(
-              searchQuery: _searchQuery,
-              selectedCategory: _selectedCategory,
-              selectedLocation: _selectedLocation,
-              radiusKm: _radiusKm,
-              onClearFilters: _clearHomeFilters,
-            ),
+            const FeedPage(),
           ],
         ),
       ),
     );
   }
 
+  void _showHomeSearch() {
+    setState(() => _selectedTab = 0);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _searchFocusNode.requestFocus();
+    });
+  }
+
   void _onDestinationSelected(int index) {
-    if (index == 0) return;
+    if (index == 0 || index == 1) {
+      FocusScope.of(context).unfocus();
+      setState(() => _selectedTab = index);
+      return;
+    }
 
     const destinations = ['Home', 'Feed', 'Inbox', 'Menu'];
     ScaffoldMessenger.of(context)

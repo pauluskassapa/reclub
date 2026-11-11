@@ -7,10 +7,12 @@ class HomeBottomNavigation extends StatelessWidget {
     super.key,
     required this.onDestinationSelected,
     required this.onSearchPressed,
+    this.selectedIndex = 0,
   });
 
   final ValueChanged<int> onDestinationSelected;
   final VoidCallback onSearchPressed;
+  final int selectedIndex;
 
   static const _destinations = [
     (label: 'Home', icon: Icons.home_outlined),
@@ -48,7 +50,7 @@ class HomeBottomNavigation extends StatelessWidget {
                       child: _NavigationButton(
                         label: _destinations[index].label,
                         icon: _destinations[index].icon,
-                        isSelected: index == 0,
+                        isSelected: index == selectedIndex,
                         onTap: () => onDestinationSelected(index),
                       ),
                     ),
@@ -102,7 +104,13 @@ class _NavigationButton extends StatelessWidget {
             color: isSelected ? AppColors.primary : Colors.transparent,
             borderRadius: BorderRadius.circular(30),
           ),
-          child: Center(child: Icon(icon, color: AppColors.text, size: 25)),
+          child: Center(
+            child: Icon(
+              icon,
+              color: isSelected ? Colors.white : AppColors.text,
+              size: 25,
+            ),
+          ),
         ),
       ),
     );
