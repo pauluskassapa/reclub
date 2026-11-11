@@ -5,13 +5,15 @@ import '../../daniel_detail/detail_page.dart';
 import '../models/activity.dart';
 
 class ActivityCard extends StatelessWidget {
-  const ActivityCard({super.key, required this.activity});
+  const ActivityCard({super.key, required this.activity, this.distanceKm});
 
   final Activity activity;
+  final double? distanceKm;
 
   @override
   Widget build(BuildContext context) {
-    final bool hasDetail = activity.title == 'Fun Futsal Bareng' ||
+    final bool hasDetail =
+        activity.title == 'Fun Futsal Bareng' ||
         activity.title == 'Basket Sore' ||
         activity.category.toLowerCase() == 'basket';
 
@@ -69,23 +71,34 @@ class ActivityCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 5),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.people_alt_outlined,
-                            color: AppColors.primary,
-                            size: 15,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${activity.participants}/${activity.capacity} peserta · ${activity.capacity - activity.participants} slot',
-                            style: const TextStyle(
-                              color: AppColors.mutedText,
-                              fontSize: 11,
+                      if (activity.capacity > 0)
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.people_alt_outlined,
+                              color: AppColors.primary,
+                              size: 15,
                             ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${activity.participants}/${activity.capacity} peserta · ${activity.capacity - activity.participants} slot',
+                              style: const TextStyle(
+                                color: AppColors.mutedText,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                      if (distanceKm != null) ...[
+                        const SizedBox(height: 5),
+                        Text(
+                          '${distanceKm!.toStringAsFixed(1)} km dari area pilihan',
+                          style: const TextStyle(
+                            color: AppColors.mutedText,
+                            fontSize: 11,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ],
                   ),
                 ),

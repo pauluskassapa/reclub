@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../paulus_home/models/activity.dart';
-import 'widgets/Position.dart';
+import 'widgets/detail_position_selector.dart';
 import 'widgets/ai_chatbot.dart';
 import 'widgets/detail_activity_info.dart';
 import 'widgets/detail_category_chips.dart';

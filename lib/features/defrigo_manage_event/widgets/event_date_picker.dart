@@ -37,7 +37,7 @@ class EventDatePicker extends StatelessWidget {
       confirmText: 'Simpan',
     );
 
-    if (selectedTime == null) return;
+    if (selectedTime == null || !context.mounted) return;
 
     final result = DateTime(
       selectedDate.year,

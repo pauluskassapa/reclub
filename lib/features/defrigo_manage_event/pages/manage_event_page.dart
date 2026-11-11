@@ -12,7 +12,14 @@ import '../widgets/event_submit_button.dart';
 import '../widgets/managed_event_card.dart';
 
 class ManageEventPage extends StatefulWidget {
-  const ManageEventPage({super.key});
+  const ManageEventPage({
+    super.key,
+    this.onEventsChanged,
+    this.initialEvents = const [],
+  });
+
+  final ValueChanged<List<ManagedEvent>>? onEventsChanged;
+  final List<ManagedEvent> initialEvents;
 
   @override
   State<ManageEventPage> createState() => _ManageEventPageState();
@@ -21,22 +28,25 @@ class ManageEventPage extends StatefulWidget {
 class _ManageEventPageState extends State<ManageEventPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _nameController =
-      TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
 
-  final TextEditingController _descriptionController =
-      TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
 
-  final TextEditingController _locationController =
-      TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
 
-  final List<ManagedEvent> _events = [];
+  late final List<ManagedEvent> _events;
 
   DateTime? _selectedDateTime;
 
   String _selectedCategory = 'Sepak bola';
 
   int? _editingIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _events = [...widget.initialEvents];
+  }
 
   @override
   void dispose() {
@@ -76,6 +86,7 @@ class _ManageEventPageState extends State<ManageEventPage> {
         _events.add(event);
       }
     });
+    widget.onEventsChanged?.call(List.unmodifiable(_events));
 
     final isEditing = _editingIndex != null;
 
@@ -147,10 +158,7 @@ class _ManageEventPageState extends State<ManageEventPage> {
               onPressed: () {
                 Navigator.pop(context, true);
               },
-              child: const Text(
-                'Hapus',
-                style: TextStyle(color: Colors.red),
-              ),
+              child: const Text('Hapus', style: TextStyle(color: Colors.red)),
             ),
           ],
         );
@@ -168,6 +176,7 @@ class _ManageEventPageState extends State<ManageEventPage> {
         _editingIndex = _editingIndex! - 1;
       }
     });
+    widget.onEventsChanged?.call(List.unmodifiable(_events));
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -184,16 +193,11 @@ class _ManageEventPageState extends State<ManageEventPage> {
       appBar: AppBar(
         title: const Text(
           'Kelola Kegiatan',
-          style: TextStyle(
-            color: AppColors.text,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: AppColors.text, fontWeight: FontWeight.bold),
         ),
         backgroundColor: AppColors.background,
         elevation: 0,
-        iconTheme: const IconThemeData(
-          color: AppColors.text,
-        ),
+        iconTheme: const IconThemeData(color: AppColors.text),
       ),
       body: SafeArea(
         child: ListView(
@@ -214,15 +218,11 @@ class _ManageEventPageState extends State<ManageEventPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      EventNameField(
-                        controller: _nameController,
-                      ),
+                      EventNameField(controller: _nameController),
 
                       const SizedBox(height: 18),
 
-                      EventDescriptionField(
-                        controller: _descriptionController,
-                      ),
+                      EventDescriptionField(controller: _descriptionController),
 
                       const SizedBox(height: 18),
 
@@ -248,9 +248,7 @@ class _ManageEventPageState extends State<ManageEventPage> {
 
                       const SizedBox(height: 18),
 
-                      EventLocationField(
-                        controller: _locationController,
-                      ),
+                      EventLocationField(controller: _locationController),
 
                       const SizedBox(height: 24),
 
@@ -267,9 +265,7 @@ class _ManageEventPageState extends State<ManageEventPage> {
                             onPressed: _resetForm,
                             child: const Text(
                               'Batal Mengedit',
-                              style: TextStyle(
-                                color: AppColors.mutedText,
-                              ),
+                              style: TextStyle(color: AppColors.mutedText),
                             ),
                           ),
                         ),
@@ -353,9 +349,7 @@ class _ManageEventPageState extends State<ManageEventPage> {
                       Text(
                         'Kegiatan yang kamu buat akan muncul di sini.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: AppColors.mutedText,
-                        ),
+                        style: TextStyle(color: AppColors.mutedText),
                       ),
                     ],
                   ),
@@ -365,16 +359,13 @@ class _ManageEventPageState extends State<ManageEventPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
-                  children: List.generate(
-                    _events.length,
-                    (index) {
-                      return ManagedEventCard(
-                        event: _events[index],
-                        onEdit: () => _editEvent(index),
-                        onDelete: () => _deleteEvent(index),
-                      );
-                    },
-                  ),
+                  children: List.generate(_events.length, (index) {
+                    return ManagedEventCard(
+                      event: _events[index],
+                      onEdit: () => _editEvent(index),
+                      onDelete: () => _deleteEvent(index),
+                    );
+                  }),
                 ),
               ),
           ],

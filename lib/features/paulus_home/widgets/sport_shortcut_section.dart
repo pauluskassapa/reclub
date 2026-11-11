@@ -34,13 +34,43 @@ class SportShortcutSection extends StatelessWidget {
       'assets/images/basket.jpg',
       Icons.sports_basketball,
     ),
-    _SportShortcut('Voli', 'Voli', null, Icons.sports_volleyball),
-    _SportShortcut('Tenis', 'Tenis', null, Icons.sports_tennis),
-    _SportShortcut('Sepeda', 'Sepeda', null, Icons.directions_bike),
-    _SportShortcut('Renang', 'Renang', null, Icons.pool),
-    _SportShortcut('Lari', 'Lari', null, Icons.sports),
-    _SportShortcut('Yoga', 'Yoga', null, Icons.self_improvement),
-    _SportShortcut('Pingpong', 'Pingpong', null, Icons.sports_tennis),
+    _SportShortcut(
+      'Voli',
+      'Voli',
+      'assets/images/volleyball.jpg',
+      Icons.sports_volleyball,
+    ),
+    _SportShortcut(
+      'Tenis',
+      'Tenis',
+      'assets/images/tennis.jpg',
+      Icons.sports_tennis,
+    ),
+    _SportShortcut(
+      'Sepeda',
+      'Sepeda',
+      'assets/images/cycling.jpg',
+      Icons.directions_bike,
+    ),
+    _SportShortcut(
+      'Renang',
+      'Renang',
+      'assets/images/swimming.jpg',
+      Icons.pool,
+    ),
+    _SportShortcut('Lari', 'Lari', 'assets/images/running.jpg', Icons.sports),
+    _SportShortcut(
+      'Yoga',
+      'Yoga',
+      'assets/images/yoga.jpg',
+      Icons.self_improvement,
+    ),
+    _SportShortcut(
+      'Pingpong',
+      'Pingpong',
+      'assets/images/pingpong.jpg',
+      Icons.sports_tennis,
+    ),
   ];
 
   @override
@@ -76,7 +106,7 @@ class SportShortcutSection extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 scrollDirection: Axis.horizontal,
                 itemCount: _shortcuts.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 10),
+                separatorBuilder: (_, _) => const SizedBox(width: 10),
                 itemBuilder: (context, index) {
                   final shortcut = _shortcuts[index];
                   final isSelected = shortcut.category == selectedCategory;
