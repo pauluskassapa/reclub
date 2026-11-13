@@ -85,10 +85,8 @@ class Club {
   final double latitude;
   final double longitude;
 
-  /// Label ringkas untuk kartu daftar klub di Home (contoh: "Sepak bola · 128 anggota").
   String get sportSummary => '$category · $memberCount anggota';
 
-  /// Menghasilkan inisial 2 huruf dari nama klub secara otomatis.
   String get initials => name
       .split(' ')
       .where((word) => word.isNotEmpty)
@@ -97,7 +95,7 @@ class Club {
       .join()
       .toUpperCase();
 
-  /// Daftar 10 klub olahraga bawaan di RECLUB.
+  // data dummy unutk 10 club bawaan 
   static const List<Club> _initialClubs = [
     Club(
       name: 'Jakarta Futsal Club',
@@ -401,13 +399,11 @@ class Club {
     'south jakarta hoops club': _initialClubs[2],
   };
 
-  /// Mengembalikan seluruh daftar klub (klub baru buatan pengguna + 10 klub bawaan).
   static List<Club> get allClubs => List.unmodifiable([
         ..._customClubs,
         ..._initialClubs,
       ]);
 
-  /// Mendaftarkan klub baru buatan pengguna ke dalam daftar dan indeks pencarian O(1).
   static void registerClub(Club newClub) {
     final key = newClub.name.trim().toLowerCase();
     _customClubs.removeWhere((c) => c.name.trim().toLowerCase() == key);
@@ -415,7 +411,6 @@ class Club {
     _clubsByName[key] = newClub;
   }
 
-  /// Mencari data [Club] berdasarkan nama klub dengan kompleksitas waktu O(1).
   static Club findByName(String clubName) {
     final normalized = clubName.trim().toLowerCase();
     return _clubsByName[normalized] ?? _initialClubs.first;
