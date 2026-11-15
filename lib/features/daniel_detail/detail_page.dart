@@ -30,12 +30,58 @@ class _DetailPageState extends State<DetailPage> {
   bool _isJoined = false;
   String _selectedRole = 'All-Rounder';
 
-  _SportDetailConfig get _config {
-    final isBasket = widget.activity?.category.toLowerCase() == 'basket' ||
-        widget.activity?.title == 'Basket Sore';
-    return isBasket
+    _SportDetailConfig get _config {
+    final activity = widget.activity;
+    final isBasket = activity?.category.toLowerCase() == 'basket' ||
+        activity?.title == 'Basket Sore';
+
+    final base = isBasket
         ? _SportDetailConfig.basket()
         : _SportDetailConfig.futsal();
+
+    if (activity == null ||
+        activity.title == 'Fun Futsal Bareng' ||
+        activity.title == 'Basket Sore') {
+      return base;
+    }
+
+    return _SportDetailConfig(
+      title: activity.title,
+      clubName: 'Komunitas ${activity.category} Reclub',
+      imagePath: activity.imagePath,
+      category: activity.category,
+      sportIcon: _iconForCategory(activity.category),
+      timeGroup: activity.timeGroup == ActivityTimeGroup.weekend
+          ? 'Weekend'
+          : 'Weekday',
+      skillLevel: base.skillLevel,
+      courtType: 'Lapangan ${activity.category}',
+      schedule: '${activity.schedule} WIB',
+      location: activity.location,
+      venueAddress: activity.location,
+      fee: base.fee,
+      feeNote: base.feeNote,
+      quotaTitle: 'Kuota Pemain ${activity.category}',
+      joinLabel: 'Ikut ${activity.category}',
+      capacity: activity.capacity > 0 ? activity.capacity : base.capacity,
+      description: base.description,
+      initialParticipants: base.initialParticipants,
+      roles: base.roles,
+    );
+  }
+
+  IconData _iconForCategory(String category) {
+    return switch (category.toLowerCase()) {
+      'sepak bola' || 'futsal' => Icons.sports_soccer_rounded,
+      'basket' => Icons.sports_basketball_rounded,
+      'voli' => Icons.sports_volleyball_rounded,
+      'badminton' || 'tenis' || 'pingpong' => Icons.sports_tennis_rounded,
+      'lari' => Icons.directions_run_rounded,
+      'sepeda' => Icons.directions_bike_rounded,
+      'renang' => Icons.pool_rounded,
+      'yoga' => Icons.self_improvement_rounded,
+      _ => Icons.sports_rounded,
+    };
   }
 
   List<FutsalParticipant> get _participants =>

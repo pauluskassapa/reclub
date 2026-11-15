@@ -27,10 +27,9 @@ class DetailPositionSelectorSheet extends StatefulWidget {
   final String activityTitle;
   final IconData headerIcon;
 
-  // Alias agar kompatibel dengan pemanggilan lama
   static const List<FutsalRoleOption> roles = futsalRoles;
 
-  // Buat role pemain futsal
+// role pemain futsal
   static const List<FutsalRoleOption> futsalRoles = [
     FutsalRoleOption(
       name: 'Kiper',
@@ -58,7 +57,7 @@ class DetailPositionSelectorSheet extends StatefulWidget {
     ),
   ];
 
-  // Buat role pemain basket (5 posisi utama + All-Rounder)
+  // Buat role pemain basket
   static const List<FutsalRoleOption> basketRoles = [
     FutsalRoleOption(
       name: 'Point Guard (PG)',
