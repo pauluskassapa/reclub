@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 
 class HomeHeader extends StatelessWidget {
-  const HomeHeader({super.key, required this.userName});
+  const HomeHeader({
+    super.key,
+    required this.userName,
+    required this.onNotificationsTap,
+  });
 
   final String userName;
+  final VoidCallback onNotificationsTap;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +48,14 @@ class HomeHeader extends StatelessWidget {
               ),
               CircleAvatar(
                 backgroundColor: AppColors.accent,
-                child: Icon(Icons.notifications_none, color: AppColors.text),
+                child: IconButton(
+                  tooltip: 'Notifikasi',
+                  onPressed: onNotificationsTap,
+                  icon: const Icon(
+                    Icons.notifications_none,
+                    color: AppColors.text,
+                  ),
+                ),
               ),
             ],
           ),

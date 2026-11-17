@@ -33,6 +33,8 @@ void main() {
   testWidgets(
     'Failed database request can be retried without local seed posts',
     (tester) async {
+      await tester.binding.setSurfaceSize(const Size(400, 900));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
       final service = TestFeedService()..fail = true;
       await tester.pumpWidget(
         MaterialApp(
@@ -60,6 +62,20 @@ void main() {
       expect(find.text('Klub dari database'), findsOneWidget);
       expect(find.text('Latihan sore'), findsOneWidget);
       expect(find.text('Coba lagi'), findsNothing);
+      await tester.ensureVisible(find.byTooltip('Simpan postingan'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Simpan postingan'));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Tersimpan (1)'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Tersimpan (1)'));
+      await tester.pumpAndSettle();
+      expect(find.text('Latihan sore'), findsOneWidget);
+      await tester.ensureVisible(find.byTooltip('Hapus dari simpanan'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Hapus dari simpanan'));
+      await tester.pumpAndSettle();
+      expect(find.text('Latihan sore'), findsNothing);
     },
   );
 }

@@ -36,4 +36,52 @@ class FeedService {
         .map((row) => FeedPost.fromJson(row as Map<String, dynamic>))
         .toList(growable: false);
   }
+
+  Future<void> submitPost({
+    required String club,
+    required String category,
+    required String title,
+    required String message,
+    required String imagePath,
+  }) async {
+    if (club.trim().isEmpty ||
+        club.length > 80 ||
+        title.trim().isEmpty ||
+        title.length > 120 ||
+        message.trim().isEmpty ||
+        message.length > 2000) {
+      throw ArgumentError('Invalid post');
+    }
+    final initials = club
+        .trim()
+        .split(RegExp(r'\s+'))
+        .take(2)
+        .map((word) => String.fromCharCode(word.runes.first))
+        .join()
+        .toUpperCase();
+    final response = await http
+        .post(
+          Uri.parse(
+            '${SupabaseCommunityService.supabaseUrl}/rest/v1/feed_posts',
+          ),
+          headers: {
+            'apikey': SupabaseCommunityService.supabasePublishableKey,
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Prefer': 'return=minimal',
+          },
+          body: jsonEncode({
+            'club': club.trim(),
+            'initials': initials,
+            'category': category,
+            'title': title.trim(),
+            'message': message.trim(),
+            'image_path': imagePath,
+            'is_published': false,
+          }),
+        )
+        .timeout(const Duration(seconds: 15));
+    if (response.statusCode != 201) {
+      throw Exception('Post submission failed: ${response.statusCode}');
+    }
+  }
 }
