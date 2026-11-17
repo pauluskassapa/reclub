@@ -4,6 +4,7 @@ import '../../core/theme/app_colors.dart';
 import 'models/feed_post.dart';
 import 'services/feed_service.dart';
 import 'widgets/feed_post_card.dart';
+import 'widgets/create_feed_page.dart';
 
 class FeedPage extends StatefulWidget {
   const FeedPage({super.key, this.service = const FeedService()});
@@ -49,6 +50,20 @@ class _FeedPageState extends State<FeedPage> {
     }
   }
 
+  Future<void> _createPost() async {
+    final sent = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => CreateFeedPage(service: widget.service),
+      ),
+    );
+    if (!mounted || sent != true) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Postingan terkirim. Menunggu persetujuan pengelola.'),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final visiblePosts = _posts
@@ -69,6 +84,14 @@ class _FeedPageState extends State<FeedPage> {
               fontSize: 28,
               fontWeight: FontWeight.bold,
               color: AppColors.text,
+            ),
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              onPressed: _createPost,
+              icon: const Icon(Icons.edit_square),
+              label: const Text('Buat postingan'),
             ),
           ),
           const SizedBox(height: 4),
