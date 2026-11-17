@@ -11,6 +11,7 @@ import 'widgets/home_promo_card.dart';
 import 'widgets/home_search_bar.dart';
 import 'widgets/popular_clubs_section.dart';
 import 'widgets/sport_shortcut_section.dart';
+import '../joan_profile/profile_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, this.userName = 'Teman'});
@@ -112,6 +113,15 @@ class _HomePageState extends State<HomePage> {
 
   void _onDestinationSelected(int index) {
     if (index == 0) return;
+
+    if (index == 3) {
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => const JoanProfilePage(),
+        ),
+      );
+      return;
+    }
 
     const destinations = ['Home', 'Feed', 'Inbox', 'Menu'];
     ScaffoldMessenger.of(context)
