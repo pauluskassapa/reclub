@@ -34,6 +34,7 @@ class ActivityLocationFilter extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           DropdownButtonFormField<String?>(
+            key: ValueKey(selectedLocation),
             initialValue: selectedLocation,
             decoration: InputDecoration(
               prefixIcon: const Icon(Icons.location_on_outlined),

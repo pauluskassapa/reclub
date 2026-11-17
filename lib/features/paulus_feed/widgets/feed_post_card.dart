@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 
-class FeedPostCard extends StatefulWidget {
+class FeedPostCard extends StatelessWidget {
   const FeedPostCard({
     super.key,
     required this.club,
@@ -12,6 +12,10 @@ class FeedPostCard extends StatefulWidget {
     required this.message,
     required this.imagePath,
     required this.likes,
+    required this.liked,
+    required this.saved,
+    required this.onLike,
+    required this.onSave,
   });
 
   final String club;
@@ -22,13 +26,10 @@ class FeedPostCard extends StatefulWidget {
   final String imagePath;
   final int likes;
 
-  @override
-  State<FeedPostCard> createState() => _FeedPostCardState();
-}
-
-class _FeedPostCardState extends State<FeedPostCard> {
-  bool _liked = false;
-  bool _saved = false;
+  final bool liked;
+  final bool saved;
+  final VoidCallback onLike;
+  final VoidCallback onSave;
 
   @override
   Widget build(BuildContext context) {
@@ -48,13 +49,13 @@ class _FeedPostCardState extends State<FeedPostCard> {
             leading: CircleAvatar(
               backgroundColor: AppColors.primary.withValues(alpha: 0.12),
               foregroundColor: AppColors.primary,
-              child: Text(widget.initials),
+              child: Text(initials),
             ),
             title: Text(
-              widget.club,
+              club,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            subtitle: Text(widget.category),
+            subtitle: Text(category),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
@@ -62,7 +63,7 @@ class _FeedPostCardState extends State<FeedPostCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.title,
+                  title,
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -71,7 +72,7 @@ class _FeedPostCardState extends State<FeedPostCard> {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  widget.message,
+                  message,
                   style: const TextStyle(color: AppColors.text, height: 1.4),
                 ),
               ],
@@ -80,9 +81,9 @@ class _FeedPostCardState extends State<FeedPostCard> {
           AspectRatio(
             aspectRatio: 16 / 9,
             child: Image.asset(
-              widget.imagePath,
+              imagePath,
               fit: BoxFit.cover,
-              semanticLabel: 'Foto olahraga ${widget.category}',
+              semanticLabel: 'Foto olahraga $category',
               errorBuilder: (_, _, _) => const ColoredBox(
                 color: AppColors.background,
                 child: Center(
@@ -96,26 +97,26 @@ class _FeedPostCardState extends State<FeedPostCard> {
             child: Row(
               children: [
                 IconButton(
-                  tooltip: _liked ? 'Batal suka' : 'Sukai postingan',
-                  isSelected: _liked,
+                  tooltip: liked ? 'Batal suka' : 'Sukai postingan',
+                  isSelected: liked,
                   selectedIcon: const Icon(Icons.favorite),
                   icon: const Icon(Icons.favorite_border),
-                  color: _liked ? AppColors.primary : AppColors.mutedText,
-                  onPressed: () => setState(() => _liked = !_liked),
+                  color: liked ? AppColors.primary : AppColors.mutedText,
+                  onPressed: onLike,
                 ),
                 Expanded(
                   child: Text(
-                    '${widget.likes + (_liked ? 1 : 0)} suka',
+                    '${likes + (liked ? 1 : 0)} suka',
                     style: const TextStyle(color: AppColors.mutedText),
                   ),
                 ),
                 IconButton(
-                  tooltip: _saved ? 'Hapus dari simpanan' : 'Simpan postingan',
-                  isSelected: _saved,
+                  tooltip: saved ? 'Hapus dari simpanan' : 'Simpan postingan',
+                  isSelected: saved,
                   selectedIcon: const Icon(Icons.bookmark),
                   icon: const Icon(Icons.bookmark_border),
-                  color: _saved ? AppColors.primary : AppColors.mutedText,
-                  onPressed: () => setState(() => _saved = !_saved),
+                  color: saved ? AppColors.primary : AppColors.mutedText,
+                  onPressed: onSave,
                 ),
               ],
             ),

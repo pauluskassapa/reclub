@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../daniel_detail/detail_page.dart';
 import '../models/activity.dart';
+import '../pages/activity_summary_page.dart';
 
 class ActivityCard extends StatelessWidget {
   const ActivityCard({super.key, required this.activity, this.distanceKm});
@@ -14,8 +15,7 @@ class ActivityCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool hasDetail =
         activity.title == 'Fun Futsal Bareng' ||
-        activity.title == 'Basket Sore' ||
-        activity.category.toLowerCase() == 'basket';
+        activity.title == 'Basket Sore';
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -24,15 +24,15 @@ class ActivityCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap: hasDetail
-              ? () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => DetailPage(activity: activity),
-                    ),
-                  );
-                }
-              : null,
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => hasDetail
+                    ? DetailPage(activity: activity)
+                    : ActivitySummaryPage(activity: activity),
+              ),
+            );
+          },
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
@@ -102,11 +102,10 @@ class ActivityCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (hasDetail)
-                  const Icon(
-                    Icons.chevron_right_rounded,
-                    color: AppColors.primary,
-                  ),
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  color: AppColors.primary,
+                ),
               ],
             ),
           ),
