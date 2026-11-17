@@ -10,12 +10,16 @@ class PopularClubsSection extends StatelessWidget {
     required this.selectedCategory,
     required this.selectedLocation,
     required this.radiusKm,
+    required this.onClearFilters,
+    required this.onSportSelected,
   });
 
   final String searchQuery;
   final String selectedCategory;
   final String? selectedLocation;
   final double radiusKm;
+  final VoidCallback onClearFilters;
+  final ValueChanged<String> onSportSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +28,6 @@ class PopularClubsSection extends StatelessWidget {
         name: 'Jakarta Futsal Club',
         category: 'Sepak bola',
         sport: 'Sepak bola · 128 anggota',
-        imagePath: 'assets/images/futsal.jpg',
         latitude: -6.2615,
         longitude: 106.8106,
       ),
@@ -32,7 +35,6 @@ class PopularClubsSection extends StatelessWidget {
         name: 'Badminton Weekend',
         category: 'Badminton',
         sport: 'Badminton · 86 anggota',
-        imagePath: 'assets/images/badminton.jpg',
         latitude: -6.1865,
         longitude: 106.8342,
       ),
@@ -40,7 +42,6 @@ class PopularClubsSection extends StatelessWidget {
         name: 'Basket Sore Jakarta',
         category: 'Basket',
         sport: 'Basket · 64 anggota',
-        imagePath: 'assets/images/basket.jpg',
         latitude: -6.244,
         longitude: 106.800,
       ),
@@ -48,7 +49,6 @@ class PopularClubsSection extends StatelessWidget {
         name: 'Jakarta Morning Runners',
         category: 'Lari',
         sport: 'Lari · 92 anggota',
-        imagePath: 'assets/images/home_hero.jpg',
         latitude: -6.218,
         longitude: 106.802,
       ),
@@ -56,7 +56,6 @@ class PopularClubsSection extends StatelessWidget {
         name: 'Voli Seru Jakarta Barat',
         category: 'Voli',
         sport: 'Voli · 48 anggota',
-        imagePath: 'assets/images/futsal.jpg',
         latitude: -6.168,
         longitude: 106.758,
       ),
@@ -64,7 +63,6 @@ class PopularClubsSection extends StatelessWidget {
         name: 'Jaksel Tennis Crew',
         category: 'Tenis',
         sport: 'Tenis · 35 anggota',
-        imagePath: 'assets/images/home_hero.jpg',
         latitude: -6.275,
         longitude: 106.817,
       ),
@@ -72,7 +70,6 @@ class PopularClubsSection extends StatelessWidget {
         name: 'Gowes Bareng Timur',
         category: 'Sepeda',
         sport: 'Sepeda · 57 anggota',
-        imagePath: 'assets/images/home_hero.jpg',
         latitude: -6.219,
         longitude: 106.900,
       ),
@@ -80,7 +77,6 @@ class PopularClubsSection extends StatelessWidget {
         name: 'Swim Buddies Jakarta',
         category: 'Renang',
         sport: 'Renang · 41 anggota',
-        imagePath: 'assets/images/badminton.jpg',
         latitude: -6.128,
         longitude: 106.856,
       ),
@@ -88,7 +84,6 @@ class PopularClubsSection extends StatelessWidget {
         name: 'Yoga Pagi Pusat',
         category: 'Yoga',
         sport: 'Yoga · 62 anggota',
-        imagePath: 'assets/images/home_hero.jpg',
         latitude: -6.1865,
         longitude: 106.8342,
       ),
@@ -96,7 +91,6 @@ class PopularClubsSection extends StatelessWidget {
         name: 'Pingpong Fun Club',
         category: 'Pingpong',
         sport: 'Pingpong · 29 anggota',
-        imagePath: 'assets/images/basket.jpg',
         latitude: -6.251,
         longitude: 106.823,
       ),
@@ -139,16 +133,78 @@ class PopularClubsSection extends StatelessWidget {
           ),
         ),
         if (filteredClubs.isEmpty)
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Text(
-              'Klub tidak ditemukan.',
-              style: TextStyle(color: AppColors.mutedText),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Column(
+                children: [
+                  const Text(
+                    'Klub tidak ditemukan',
+                    style: TextStyle(
+                      color: AppColors.text,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Coba ubah olahraga, daerah, atau kata kunci.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: AppColors.mutedText),
+                  ),
+                  const SizedBox(height: 10),
+                  OutlinedButton.icon(
+                    onPressed: onClearFilters,
+                    icon: const Icon(Icons.filter_alt_off_outlined),
+                    label: const Text('Hapus semua filter'),
+                  ),
+                ],
+              ),
             ),
           )
         else
-          ...filteredClubs,
+          ...filteredClubs.map(
+            (club) =>
+                InkWell(onTap: () => _showClub(context, club), child: club),
+          ),
       ],
+    );
+  }
+
+  void _showClub(BuildContext context, _ClubCard club) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (sheetContext) => SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _ClubLogo(category: club.category, name: club.name),
+              const SizedBox(height: 16),
+              Text(club.name, style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 8),
+              Text(club.sport),
+              const SizedBox(height: 16),
+              FilledButton(
+                onPressed: () {
+                  Navigator.pop(sheetContext);
+                  onSportSelected(club.category);
+                },
+                child: Text('Cari kegiatan ${club.category}'),
+              ),
+              const Text('Menampilkan kegiatan dengan olahraga yang sama.'),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -158,7 +214,6 @@ class _ClubCard extends StatelessWidget {
     required this.name,
     required this.category,
     required this.sport,
-    required this.imagePath,
     required this.latitude,
     required this.longitude,
   });
@@ -166,7 +221,6 @@ class _ClubCard extends StatelessWidget {
   final String name;
   final String category;
   final String sport;
-  final String imagePath;
   final double latitude;
   final double longitude;
 
@@ -177,19 +231,99 @@ class _ClubCard extends StatelessWidget {
       child: Card(
         color: AppColors.surface,
         child: ListTile(
-          leading: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.asset(
-              imagePath,
-              width: 52,
-              height: 52,
-              fit: BoxFit.cover,
-              semanticLabel: name,
-            ),
-          ),
+          leading: _ClubLogo(category: category, name: name),
           title: Text(name),
           subtitle: Text(sport),
           trailing: const Icon(Icons.chevron_right),
+        ),
+      ),
+    );
+  }
+}
+
+class _ClubLogo extends StatelessWidget {
+  const _ClubLogo({required this.category, required this.name});
+
+  final String category;
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    final (color, icon) = switch (category) {
+      'Sepak bola' => (const Color(0xFF146B4A), Icons.sports_soccer_rounded),
+      'Badminton' => (const Color(0xFF6847C7), Icons.sports_tennis_rounded),
+      'Basket' => (const Color(0xFFDB6B22), Icons.sports_basketball_rounded),
+      'Lari' => (const Color(0xFF087F8C), Icons.directions_run_rounded),
+      'Voli' => (const Color(0xFF2455A6), Icons.sports_volleyball_rounded),
+      'Tenis' => (const Color(0xFF638C27), Icons.sports_tennis_rounded),
+      'Sepeda' => (const Color(0xFFB24C19), Icons.directions_bike_rounded),
+      'Renang' => (const Color(0xFF087DAB), Icons.pool_rounded),
+      'Yoga' => (const Color(0xFFAC3978), Icons.self_improvement_rounded),
+      'Pingpong' => (const Color(0xFF62552B), Icons.sports_tennis_rounded),
+      _ => (const Color(0xFF43556E), Icons.groups_rounded),
+    };
+    final initials = name
+        .split(' ')
+        .where((word) => word.isNotEmpty)
+        .take(2)
+        .map((word) => word[0])
+        .join()
+        .toUpperCase();
+
+    return Semantics(
+      image: true,
+      label: 'Logo $name',
+      child: Container(
+        width: 54,
+        height: 54,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [color, Color.lerp(color, Colors.black, 0.38)!],
+          ),
+          borderRadius: BorderRadius.circular(17),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.8),
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: 0.2),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Positioned(
+              top: 4,
+              right: 5,
+              child: Icon(
+                icon,
+                size: 19,
+                color: Colors.white.withValues(alpha: 0.35),
+              ),
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 21, color: Colors.white),
+                Text(
+                  initials,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 9,
+                    height: 1,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 0.7,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

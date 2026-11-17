@@ -120,7 +120,7 @@ class _ReclubSplashScreenState extends State<ReclubSplashScreen>
                     minHeight: 3,
                     borderRadius: BorderRadius.all(Radius.circular(3)),
                     color: AppColors.primary,
-                    backgroundColor: Color(0xFFDDE7E3),
+                    backgroundColor: Color(0xFFE0E5EC),
                   ),
                 ),
               ],

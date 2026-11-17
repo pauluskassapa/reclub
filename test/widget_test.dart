@@ -9,7 +9,6 @@ void main() {
     expect(find.text('RECLUB'), findsOneWidget);
     expect(find.text('TEMUKAN TEMAN. MAIN BARENG.'), findsOneWidget);
 
-    // Dispose the splash timer before the widget test ends.
     await tester.pumpWidget(const SizedBox.shrink());
   });
 }

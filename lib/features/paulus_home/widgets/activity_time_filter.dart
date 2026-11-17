@@ -41,7 +41,7 @@ class ActivityTimeFilter extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             scrollDirection: Axis.horizontal,
             itemCount: _options.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 8),
+            separatorBuilder: (_, _) => const SizedBox(width: 8),
             itemBuilder: (context, index) {
               final option = _options[index];
               final isSelected = option.value == selectedTime;
