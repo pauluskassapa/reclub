@@ -22,3 +22,19 @@ Tidak ada service_role atau secret key yang diperlukan di aplikasi.
 Jika Feed gagal dimuat, periksa hasil eksekusi SQL, status proyek Supabase,
 koneksi internet, dan kesesuaian kolom tabel. Aplikasi tidak mengganti kegagalan
 database dengan postingan lokal.
+
+## Form buat postingan
+
+Setelah feed_setup.sql, jalankan feed_submit_setup.sql di SQL Editor.
+Jika feed_setup.sql dijalankan ulang, jalankan kembali feed_submit_setup.sql
+karena setup awal mengembalikan izin tabel menjadi baca saja.
+
+Form menerima pengajuan tanpa login dengan is_published = false.
+Pengajuan tidak tampil di API publik. Daniel membuka Table Editor → feed_posts,
+memeriksa isi lalu mengubah is_published menjadi true untuk menyetujui.
+Nama pengirim adalah input pengguna, belum identitas akun terverifikasi.
+Aplikasi tidak memiliki izin mengubah atau menghapus postingan.
+Foto memakai aset bawaan. Belum mendukung unggah foto.
+
+Alur ini untuk demo kelompok. Sebelum dibuka luas, hubungkan Supabase Auth
+serta pembatasan pengiriman untuk mencegah spam pengajuan anonim.

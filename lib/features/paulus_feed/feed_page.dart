@@ -4,6 +4,7 @@ import '../../core/theme/app_colors.dart';
 import 'models/feed_post.dart';
 import 'services/feed_service.dart';
 import 'widgets/feed_post_card.dart';
+import 'widgets/create_feed_page.dart';
 
 class FeedPage extends StatefulWidget {
   const FeedPage({super.key, this.service = const FeedService()});
@@ -18,6 +19,9 @@ class _FeedPageState extends State<FeedPage> {
   List<FeedPost> _posts = [];
   bool _loading = true;
   bool _failed = false;
+  bool _savedOnly = false;
+  final Set<String> _likedIds = {};
+  final Set<String> _savedIds = {};
 
   @override
   void initState() {
@@ -46,8 +50,25 @@ class _FeedPageState extends State<FeedPage> {
     }
   }
 
+  Future<void> _createPost() async {
+    final sent = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => CreateFeedPage(service: widget.service),
+      ),
+    );
+    if (!mounted || sent != true) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Postingan terkirim. Menunggu persetujuan pengelola.'),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final visiblePosts = _posts
+        .where((post) => !_savedOnly || _savedIds.contains(post.id))
+        .toList();
     return RefreshIndicator(
       onRefresh: () async {
         if (!_loading) await _loadPosts();
@@ -65,12 +86,47 @@ class _FeedPageState extends State<FeedPage> {
               color: AppColors.text,
             ),
           ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              onPressed: _createPost,
+              icon: const Icon(Icons.edit_square),
+              label: const Text('Buat postingan'),
+            ),
+          ),
           const SizedBox(height: 4),
           const Text(
             'Kabar dari komunitas olahraga',
             style: TextStyle(color: AppColors.mutedText),
           ),
           const SizedBox(height: 16),
+          Wrap(
+            spacing: 8,
+            children: [
+              ChoiceChip(
+                label: const Text('Semua'),
+                selected: !_savedOnly,
+                onSelected: (_) => setState(() => _savedOnly = false),
+              ),
+              ChoiceChip(
+                label: Text('Tersimpan (${_savedIds.length})'),
+                selected: _savedOnly,
+                onSelected: (_) => setState(() => _savedOnly = true),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          if (_savedOnly &&
+              visiblePosts.isEmpty &&
+              !_loading &&
+              !_failed &&
+              _posts.isNotEmpty)
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text(
+                'Belum ada postingan tersimpan. Ketuk ikon simpan pada postingan.',
+              ),
+            ),
           if (_loading) const LinearProgressIndicator(),
           if (_failed)
             Padding(
@@ -98,7 +154,7 @@ class _FeedPageState extends State<FeedPage> {
                 textAlign: TextAlign.center,
               ),
             ),
-          ..._posts.map(
+          ...visiblePosts.map(
             (post) => FeedPostCard(
               key: ValueKey(post.id),
               club: post.club,
@@ -108,6 +164,14 @@ class _FeedPageState extends State<FeedPage> {
               message: post.message,
               imagePath: post.imagePath,
               likes: post.likes,
+              liked: _likedIds.contains(post.id),
+              saved: _savedIds.contains(post.id),
+              onLike: () => setState(() {
+                if (!_likedIds.remove(post.id)) _likedIds.add(post.id);
+              }),
+              onSave: () => setState(() {
+                if (!_savedIds.remove(post.id)) _savedIds.add(post.id);
+              }),
             ),
           ),
         ],
