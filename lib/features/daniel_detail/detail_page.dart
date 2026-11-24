@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../paulus_home/models/activity.dart';
 import 'widgets/detail_position_selector.dart';
-import 'widgets/ai_chatbot.dart';
 import 'widgets/detail_activity_info.dart';
 import 'widgets/detail_category_chips.dart';
 import 'widgets/detail_community_chat.dart';
 import 'widgets/detail_image_header.dart';
 import 'widgets/detail_join_button.dart';
 import 'widgets/detail_participant_list.dart';
+import 'widgets/teamGenerator.dart';
 
 class DetailPage extends StatefulWidget {
   const DetailPage({
@@ -150,6 +150,7 @@ class _DetailPageState extends State<DetailPage> {
   Widget build(BuildContext context) {
     final config = _config;
     final participants = _participants;
+    final bool isBasket = config.category.toLowerCase() == 'basket';
     final int remainingSlots =
         (config.capacity - participants.length).clamp(0, config.capacity);
 
@@ -199,7 +200,13 @@ class _DetailPageState extends State<DetailPage> {
               capacity: config.capacity,
               description: config.description,
             ),
-            const DetailAiChatbotCard(),
+            if (isBasket)
+              TeamGenerator(
+                participantNames:
+                    participants.map((player) => player.name).toList(),
+                defaultTeamCount: 2,
+                defaultPlayersPerTeam: 5,
+              ),
             DetailCommunityChatCard(
               activityTitle: config.title,
               clubName: config.clubName,
