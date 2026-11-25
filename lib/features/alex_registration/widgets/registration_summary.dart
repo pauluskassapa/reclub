@@ -13,6 +13,7 @@ class RegistrationSummary extends StatelessWidget {
     required this.schedule,
     required this.location,
     required this.fee,
+    this.isEligible = true,
   });
 
   final String name;
@@ -21,6 +22,7 @@ class RegistrationSummary extends StatelessWidget {
   final RegistrationSchedule schedule;
   final RegistrationLocation location;
   final int fee;
+  final bool isEligible;
 
   String _formatRupiah(int value) {
     final digits = value.toString();
@@ -42,11 +44,20 @@ class RegistrationSummary extends StatelessWidget {
           _SummaryRow(label: 'Email', value: email),
           _SummaryRow(label: 'Kontak', value: phone),
           _SummaryRow(label: 'Jadwal', value: '${schedule.title}\n${schedule.label}'),
-          _SummaryRow(label: 'Lokasi', value: '${location.name}\n${location.address}'),
+          _SummaryRow(
+            label: 'Lokasi',
+            value: location.address.isEmpty
+                ? location.name
+                : '${location.name}\n${location.address}',
+          ),
           const Divider(height: 20),
           _SummaryRow(
             label: 'Total biaya',
-            value: fee <= 0 ? 'Gratis' : _formatRupiah(fee),
+            value: !isEligible
+                ? 'Pendaftaran belum tersedia'
+                : fee <= 0
+                ? 'Gratis'
+                : _formatRupiah(fee),
             emphasize: true,
           ),
           const SizedBox(height: 12),
