@@ -17,6 +17,7 @@ class FeaturedSection extends StatelessWidget {
     required this.onClearFilters,
     this.additionalActivities = const [],
     required this.onCreateActivity,
+    this.deviceLocation,
   });
 
   final String searchQuery;
@@ -27,15 +28,18 @@ class FeaturedSection extends StatelessWidget {
   final VoidCallback onClearFilters;
   final List<Activity> additionalActivities;
   final VoidCallback onCreateActivity;
+  final NearbyLocation? deviceLocation;
 
   @override
   Widget build(BuildContext context) {
     final query = searchQuery.trim().toLowerCase();
-    NearbyLocation? location;
-    for (final item in nearbyLocations) {
-      if (item.name == selectedLocation) {
-        location = item;
-        break;
+    NearbyLocation? location = deviceLocation;
+    if (location == null) {
+      for (final item in nearbyLocations) {
+        if (item.name == selectedLocation) {
+          location = item;
+          break;
+        }
       }
     }
     final allActivities = [...sampleActivities, ...additionalActivities];

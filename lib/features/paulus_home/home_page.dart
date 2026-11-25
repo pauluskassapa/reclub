@@ -4,7 +4,9 @@ import '../../core/theme/app_colors.dart';
 import '../defrigo_manage_event/models/managed_event.dart';
 import '../defrigo_manage_event/pages/manage_event_page.dart';
 import 'data/managed_event_adapter.dart';
+import 'data/nearby_locations.dart';
 import 'models/activity.dart';
+import 'services/device_location_service.dart';
 import '../daniel_detail/widgets/detail_community_chat.dart';
 import '../auth/auth_service.dart';
 import '../paulus_feed/feed_page.dart';
@@ -41,6 +43,8 @@ class _HomePageState extends State<HomePage> {
   ActivityTimeGroup? _selectedTime;
   String? _selectedLocation;
   double _radiusKm = 20;
+  NearbyLocation? _deviceLocation;
+  bool _isLocating = false;
   List<ManagedEvent> _managedEvents = const [];
 
   @override
@@ -106,9 +110,13 @@ class _HomePageState extends State<HomePage> {
                   ActivityLocationFilter(
                     selectedLocation: _selectedLocation,
                     radiusKm: _radiusKm,
+                    isUsingDeviceLocation: _deviceLocation != null,
+                    isLocating: _isLocating,
+                    onUseDeviceLocation: _useDeviceLocation,
                     onLocationSelected: (location) {
                       setState(() {
                         _selectedLocation = location;
+                        _deviceLocation = null;
                       });
                     },
                     onRadiusChanged: (radius) {
@@ -127,14 +135,17 @@ class _HomePageState extends State<HomePage> {
                       _managedEvents,
                     ),
                     onCreateActivity: _openManageEvents,
+                    deviceLocation: _deviceLocation,
                   ),
                   PopularClubsSection(
                     onSportSelected: _showSportActivities,
+                    onCreateClub: _showCreateClubHandoff,
                     searchQuery: _searchQuery,
                     selectedCategory: _selectedCategory,
                     selectedLocation: _selectedLocation,
                     radiusKm: _radiusKm,
                     onClearFilters: _clearHomeFilters,
+                    deviceLocation: _deviceLocation,
                   ),
                 ],
               ),
@@ -303,8 +314,58 @@ class _HomePageState extends State<HomePage> {
       _selectedCategory = 'Semua';
       _selectedTime = null;
       _selectedLocation = null;
+      _deviceLocation = null;
       _radiusKm = 20;
     });
+  }
+
+  Future<void> _useDeviceLocation() async {
+    setState(() => _isLocating = true);
+    try {
+      final location = await const DeviceLocationService().getCurrentLocation();
+      if (!mounted) return;
+      setState(() {
+        _deviceLocation = location;
+        _selectedLocation = null;
+      });
+    } on DeviceLocationException catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.message),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isLocating = false);
+    }
+  }
+
+  void _showCreateClubHandoff() {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (_) => const SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.groups_2_outlined, size: 40),
+              SizedBox(height: 12),
+              Text(
+                'Buat klub',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Form pembuatan klub akan dibuka dari fitur klub setelah halaman tersebut ditambahkan ke proyek.',
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _openManageEvents() {

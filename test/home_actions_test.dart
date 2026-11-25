@@ -36,6 +36,7 @@ void main() {
               radiusKm: 20,
               onClearFilters: () {},
               onSportSelected: (_) {},
+              onCreateClub: () {},
             ),
           ),
         ),

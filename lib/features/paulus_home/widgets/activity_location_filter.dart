@@ -10,12 +10,18 @@ class ActivityLocationFilter extends StatelessWidget {
     required this.onLocationSelected,
     required this.radiusKm,
     required this.onRadiusChanged,
+    required this.isUsingDeviceLocation,
+    required this.isLocating,
+    required this.onUseDeviceLocation,
   });
 
   final String? selectedLocation;
   final ValueChanged<String?> onLocationSelected;
   final double radiusKm;
   final ValueChanged<double> onRadiusChanged;
+  final bool isUsingDeviceLocation;
+  final bool isLocating;
+  final VoidCallback onUseDeviceLocation;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +39,28 @@ class ActivityLocationFilter extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
+          OutlinedButton.icon(
+            onPressed: isLocating ? null : onUseDeviceLocation,
+            icon: isLocating
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Icon(
+                    isUsingDeviceLocation
+                        ? Icons.my_location
+                        : Icons.my_location_outlined,
+                  ),
+            label: Text(
+              isLocating
+                  ? 'Mencari lokasi...'
+                  : isUsingDeviceLocation
+                  ? 'Memakai lokasi saya'
+                  : 'Gunakan lokasi saya',
+            ),
+          ),
+          const SizedBox(height: 8),
           DropdownButtonFormField<String?>(
             key: ValueKey(selectedLocation),
             initialValue: selectedLocation,
@@ -59,7 +87,9 @@ class ActivityLocationFilter extends StatelessWidget {
                 ),
               ),
             ],
-            onChanged: onLocationSelected,
+            onChanged: (location) {
+              onLocationSelected(location);
+            },
           ),
           const SizedBox(height: 8),
           Row(
