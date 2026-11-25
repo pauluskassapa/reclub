@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 
 class ConfirmationButton extends StatelessWidget {
-  const ConfirmationButton({super.key, required this.onPressed});
+  const ConfirmationButton({
+    super.key,
+    required this.onPressed,
+    this.label = 'Konfirmasi pendaftaran',
+  });
 
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
+  final String label;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +20,7 @@ class ConfirmationButton extends StatelessWidget {
       child: ElevatedButton.icon(
         onPressed: onPressed,
         icon: const Icon(Icons.check_circle_outline),
-        label: const Text('Konfirmasi pendaftaran'),
+        label: Text(label),
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,

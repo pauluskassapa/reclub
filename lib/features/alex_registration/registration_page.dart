@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../defrigo_manage_event/models/managed_event.dart';
+import 'models/registration_event_type.dart';
 import 'models/registration_option.dart';
 import 'widgets/confirmation_button.dart';
 import 'widgets/location_selector.dart';
@@ -16,6 +17,9 @@ class RegistrationPage extends StatefulWidget {
     this.event,
     this.activityName = 'Latihan voli santai',
     this.hostName,
+    this.eventType = RegistrationEventType.funMatch,
+    this.isClubMember = false,
+    this.hasPaid = false,
     this.fee = 0,
     this.participantName = '',
     this.participantEmail = '',
@@ -25,6 +29,9 @@ class RegistrationPage extends StatefulWidget {
   final ManagedEvent? event;
   final String activityName;
   final String? hostName;
+  final RegistrationEventType eventType;
+  final bool isClubMember;
+  final bool hasPaid;
   final int fee;
   final String participantName;
   final String participantEmail;
@@ -44,6 +51,23 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   RegistrationSchedule get _schedule => _availableSchedules[_selectedSchedule];
   RegistrationLocation get _location => _availableLocations[_selectedLocation];
+  bool get _isEligible => widget.eventType == RegistrationEventType.clubOnly
+      ? widget.isClubMember
+      : widget.fee > 0;
+  bool get _canConfirm =>
+      _isEligible &&
+      (widget.eventType == RegistrationEventType.clubOnly || widget.hasPaid);
+  int get _registrationFee =>
+      widget.eventType == RegistrationEventType.clubOnly ? 0 : widget.fee;
+  String get _confirmationLabel {
+    if (!_isEligible) {
+      return widget.eventType == RegistrationEventType.clubOnly
+          ? 'Khusus anggota club'
+          : 'Biaya belum ditentukan';
+    }
+    if (!_canConfirm) return 'Selesaikan pembayaran';
+    return 'Konfirmasi pendaftaran';
+  }
 
   static const _demoSchedules = [
     RegistrationSchedule(title: 'Sabtu pagi', date: 'Sabtu, 28 November 2026', time: '08.00–10.00 WIB'),
@@ -184,7 +208,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
               onSelected: (index) => setState(() => _selectedLocation = index),
             ),
             const SizedBox(height: 12),
-            PaymentSection(fee: widget.fee),
+            PaymentSection(
+              fee: _registrationFee,
+              eventType: widget.eventType,
+              isClubMember: widget.isClubMember,
+              hasPaid: widget.hasPaid,
+            ),
             const SizedBox(height: 12),
             RegistrationSummary(
               name: _valueOrDash(_nameController.text),
@@ -192,10 +221,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
               phone: _valueOrDash(_phoneController.text),
               schedule: _schedule,
               location: _location,
-              fee: widget.fee,
+              fee: _registrationFee,
+              isEligible: _isEligible,
             ),
             const SizedBox(height: 16),
-            ConfirmationButton(onPressed: _confirmRegistration),
+            ConfirmationButton(
+              onPressed: _canConfirm ? _confirmRegistration : null,
+              label: _confirmationLabel,
+            ),
           ],
         ),
       ),
@@ -205,6 +238,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   String _valueOrDash(String value) => value.trim().isEmpty ? '—' : value.trim();
 
   void _confirmRegistration() {
+    if (!_canConfirm) return;
     if (!_formKey.currentState!.validate()) return;
     FocusScope.of(context).unfocus();
     showDialog<void>(
