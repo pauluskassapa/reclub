@@ -28,3 +28,5 @@ Navigator.of(context).push(
 ```
 
 `event` memakai objek `ManagedEvent` dari kegiatan yang dipilih. Nama, kategori, deskripsi, tanggal, waktu, dan lokasi ditampilkan dari objek tersebut. Nilai `fee`, `eventType`, dan `isClubMember` dikirim terpisah karena `ManagedEvent` belum menyimpan biaya, tipe kegiatan, atau status keanggotaan. Fun match umum dengan biaya di atas nol membuka halaman pembayaran demo; setelah simulasi pembayaran selesai, peserta dapat mengonfirmasi pendaftaran. Kegiatan khusus club gratis untuk anggota (`eventType: RegistrationEventType.clubOnly`, `isClubMember: true`), sedangkan nonanggota tidak bisa mengonfirmasi pendaftaran. Halaman pembayaran belum memproses transaksi nyata.
+
+Saat konfirmasi, nama peserta, kegiatan, kategori, posisi, dan status host disimpan ke tabel Supabase `activity_participants`. Schema yang tersedia belum memiliki kolom email, telepon, jadwal terpilih, lokasi, biaya, atau status pembayaran; data tersebut belum tersimpan ke database.

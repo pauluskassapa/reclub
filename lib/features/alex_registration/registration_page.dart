@@ -5,6 +5,7 @@ import '../../defrigo_manage_event/models/managed_event.dart';
 import 'models/registration_event_type.dart';
 import 'models/registration_option.dart';
 import 'pages/registration_payment_page.dart';
+import 'services/registration_repository.dart';
 import 'widgets/confirmation_button.dart';
 import 'widgets/location_selector.dart';
 import 'widgets/participant_form.dart';
@@ -44,12 +45,14 @@ class RegistrationPage extends StatefulWidget {
 
 class _RegistrationPageState extends State<RegistrationPage> {
   final _formKey = GlobalKey<FormState>();
+  final _registrationRepository = const RegistrationRepository();
   late final TextEditingController _nameController;
   late final TextEditingController _emailController;
   late final TextEditingController _phoneController;
   int _selectedSchedule = 0;
   int _selectedLocation = 0;
   late bool _hasPaid;
+  bool _isSaving = false;
 
   RegistrationSchedule get _schedule => _availableSchedules[_selectedSchedule];
   RegistrationLocation get _location => _availableLocations[_selectedLocation];
@@ -66,6 +69,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   int get _registrationFee =>
       widget.eventType == RegistrationEventType.clubOnly ? 0 : widget.fee;
   String get _confirmationLabel {
+    if (_isSaving) return 'Menyimpan pendaftaran...';
     if (!_isEligible) {
       return widget.eventType == RegistrationEventType.clubOnly
           ? 'Khusus anggota club'
@@ -234,7 +238,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             ),
             const SizedBox(height: 16),
             ConfirmationButton(
-              onPressed: _isEligible ? _handlePrimaryAction : null,
+              onPressed: _isEligible && !_isSaving ? _handlePrimaryAction : null,
               label: _confirmationLabel,
             ),
           ],
@@ -246,7 +250,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   String _valueOrDash(String value) => value.trim().isEmpty ? '—' : value.trim();
 
   Future<void> _handlePrimaryAction() async {
-    if (!_isEligible || !_formKey.currentState!.validate()) return;
+    if (!_isEligible || _isSaving || !_formKey.currentState!.validate()) return;
     FocusScope.of(context).unfocus();
 
     if (_needsPayment) {
@@ -265,13 +269,37 @@ class _RegistrationPageState extends State<RegistrationPage> {
       return;
     }
 
-    _confirmRegistration();
+    await _confirmRegistration();
   }
 
-  void _confirmRegistration() {
-    if (!_canConfirm) return;
+  Future<void> _confirmRegistration() async {
+    if (!_canConfirm || _isSaving) return;
     if (!_formKey.currentState!.validate()) return;
     FocusScope.of(context).unfocus();
+
+    setState(() => _isSaving = true);
+    try {
+      await _registrationRepository.saveRegistration(
+        activityTitle: widget.event?.name ?? widget.activityName,
+        category: widget.event?.category ?? widget.eventType.label,
+        participantName: _nameController.text,
+      );
+    } on RegistrationSaveException {
+      if (!mounted) return;
+      setState(() => _isSaving = false);
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('Pendaftaran gagal disimpan. Periksa koneksi lalu coba lagi.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      return;
+    }
+
+    if (!mounted) return;
+    setState(() => _isSaving = false);
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
