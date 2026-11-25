@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../daniel_detail/widgets/club/club_detail.dart';
 import '../data/nearby_locations.dart';
 
 class PopularClubsSection extends StatelessWidget {
@@ -169,42 +170,18 @@ class PopularClubsSection extends StatelessWidget {
           )
         else
           ...filteredClubs.map(
-            (club) =>
-                InkWell(onTap: () => _showClub(context, club), child: club),
+            (club) => InkWell(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => ClubDetailPage.fromClubName(club.name),
+                  ),
+                );
+              },
+              child: club,
+            ),
           ),
       ],
-    );
-  }
-
-  void _showClub(BuildContext context, _ClubCard club) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      builder: (sheetContext) => SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _ClubLogo(category: club.category, name: club.name),
-              const SizedBox(height: 16),
-              Text(club.name, style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 8),
-              Text(club.sport),
-              const SizedBox(height: 16),
-              FilledButton(
-                onPressed: () {
-                  Navigator.pop(sheetContext);
-                  onSportSelected(club.category);
-                },
-                child: Text('Cari kegiatan ${club.category}'),
-              ),
-              const Text('Menampilkan kegiatan dengan olahraga yang sama.'),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

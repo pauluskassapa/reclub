@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reclub/features/paulus_home/data/sample_activities.dart';
+import 'package:reclub/features/daniel_detail/widgets/club/club_detail.dart';
 import 'package:reclub/features/paulus_home/pages/activity_summary_page.dart';
 import 'package:reclub/features/paulus_home/widgets/activity_card.dart';
 import 'package:reclub/features/paulus_home/widgets/popular_clubs_section.dart';
@@ -23,8 +24,7 @@ void main() {
     expect(find.text(activity.location), findsOneWidget);
   });
 
-  testWidgets('Club opens information and selects its sport', (tester) async {
-    String? selected;
+  testWidgets('Club opens Daniel club detail page', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -35,7 +35,7 @@ void main() {
               selectedLocation: null,
               radiusKm: 20,
               onClearFilters: () {},
-              onSportSelected: (value) => selected = value,
+              onSportSelected: (_) {},
             ),
           ),
         ),
@@ -43,8 +43,7 @@ void main() {
     );
     await tester.tap(find.text('Badminton Weekend'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Cari kegiatan Badminton'));
-    await tester.pumpAndSettle();
-    expect(selected, 'Badminton');
+    expect(find.byType(ClubDetailPage), findsOneWidget);
+    expect(find.text('Badminton Weekend'), findsWidgets);
   });
 }
