@@ -43,9 +43,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
   RegistrationLocation get _location => _locations[_selectedLocation];
 
   static const _schedules = [
-    RegistrationSchedule(title: 'Sabtu pagi', date: 'Sabtu, 14 November 2026', time: '08.00–10.00 WIB'),
-    RegistrationSchedule(title: 'Minggu sore', date: 'Minggu, 15 November 2026', time: '16.00–18.00 WIB'),
-    RegistrationSchedule(title: 'Rabu malam', date: 'Rabu, 18 November 2026', time: '19.00–21.00 WIB'),
+    RegistrationSchedule(title: 'Sabtu pagi', date: 'Sabtu, 28 November 2026', time: '08.00–10.00 WIB'),
+    RegistrationSchedule(title: 'Minggu sore', date: 'Minggu, 29 November 2026', time: '16.00–18.00 WIB'),
+    RegistrationSchedule(title: 'Rabu malam', date: 'Rabu, 2 Desember 2026', time: '19.00–21.00 WIB'),
   ];
 
   static const _locations = [
