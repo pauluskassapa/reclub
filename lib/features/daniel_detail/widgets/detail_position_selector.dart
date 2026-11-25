@@ -27,10 +27,9 @@ class DetailPositionSelectorSheet extends StatefulWidget {
   final String activityTitle;
   final IconData headerIcon;
 
-  // Alias agar kompatibel dengan pemanggilan lama
   static const List<FutsalRoleOption> roles = futsalRoles;
 
-  // Buat role pemain futsal
+// role pemain futsal
   static const List<FutsalRoleOption> futsalRoles = [
     FutsalRoleOption(
       name: 'Kiper',
@@ -58,7 +57,7 @@ class DetailPositionSelectorSheet extends StatefulWidget {
     ),
   ];
 
-  // Buat role pemain basket (5 posisi utama + All-Rounder)
+  // Buat role pemain basket
   static const List<FutsalRoleOption> basketRoles = [
     FutsalRoleOption(
       name: 'Point Guard (PG)',
@@ -85,6 +84,45 @@ class DetailPositionSelectorSheet extends StatefulWidget {
       icon: Icons.autorenew_rounded,
     ),
   ];
+
+  static const List<FutsalRoleOption> voliRoles = [
+    FutsalRoleOption(
+      name: 'Setter (Tosser)',
+      icon: Icons.sports_volleyball_rounded,
+    ),
+    FutsalRoleOption(
+      name: 'Outside Hitter (Spiker)',
+      icon: Icons.bolt_rounded,
+    ),
+    FutsalRoleOption(
+      name: 'Middle Blocker',
+      icon: Icons.shield_rounded,
+    ),
+    FutsalRoleOption(
+      name: 'Opposite Hitter',
+      icon: Icons.gps_fixed_rounded,
+    ),
+    FutsalRoleOption(
+      name: 'Libero',
+      icon: Icons.pan_tool_rounded,
+    ),
+    FutsalRoleOption(
+      name: 'All-Rounder',
+      icon: Icons.autorenew_rounded,
+    ),
+  ];
+
+  static List<FutsalRoleOption> rolesForCategory(String category) {
+    return switch (category.trim().toLowerCase()) {
+      'sepak bola' || 'futsal' => futsalRoles,
+      'basket' => basketRoles,
+      'voli' || 'volleyball' => voliRoles,
+      _ => const [],
+    };
+  }
+
+  static bool hasRolesForCategory(String category) =>
+      rolesForCategory(category).isNotEmpty;
 
   @override
   State<DetailPositionSelectorSheet> createState() =>

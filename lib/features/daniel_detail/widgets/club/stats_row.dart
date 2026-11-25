@@ -12,7 +12,7 @@ class ClubStatsRow extends StatelessWidget {
 
   final int memberCount;
   final double rating;
-  final String weeklySessions;
+  final String weeklySessions;  
   final Color accentColor;
 
   @override
