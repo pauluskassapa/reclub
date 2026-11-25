@@ -163,6 +163,7 @@ class _FeedPageState extends State<FeedPage> {
               title: post.title,
               message: post.message,
               imagePath: post.imagePath,
+              imageUrl: post.imageUrl,
               likes: post.likes,
               liked: _likedIds.contains(post.id),
               saved: _savedIds.contains(post.id),

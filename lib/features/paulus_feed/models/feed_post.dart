@@ -7,6 +7,7 @@ class FeedPost {
     required this.title,
     required this.message,
     required this.imagePath,
+    this.imageUrl,
     required this.likes,
   });
 
@@ -17,6 +18,7 @@ class FeedPost {
   final String title;
   final String message;
   final String imagePath;
+  final String? imageUrl;
   final int likes;
 
   factory FeedPost.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,7 @@ class FeedPost {
       title: json['title'] as String,
       message: json['message'] as String,
       imagePath: json['image_path'] as String,
+      imageUrl: json['image_url'] as String?,
       likes: (json['likes'] as num).toInt(),
     );
   }

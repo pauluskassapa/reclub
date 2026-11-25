@@ -11,6 +11,7 @@ class FeedPostCard extends StatelessWidget {
     required this.title,
     required this.message,
     required this.imagePath,
+    this.imageUrl,
     required this.likes,
     required this.liked,
     required this.saved,
@@ -24,6 +25,7 @@ class FeedPostCard extends StatelessWidget {
   final String title;
   final String message;
   final String imagePath;
+  final String? imageUrl;
   final int likes;
 
   final bool liked;
@@ -80,17 +82,19 @@ class FeedPostCard extends StatelessWidget {
           ),
           AspectRatio(
             aspectRatio: 16 / 9,
-            child: Image.asset(
-              imagePath,
-              fit: BoxFit.cover,
-              semanticLabel: 'Foto olahraga $category',
-              errorBuilder: (_, _, _) => const ColoredBox(
-                color: AppColors.background,
-                child: Center(
-                  child: Icon(Icons.sports, color: AppColors.primary, size: 40),
-                ),
-              ),
-            ),
+            child: imageUrl == null || imageUrl!.isEmpty
+                ? Image.asset(
+                    imagePath,
+                    fit: BoxFit.cover,
+                    semanticLabel: 'Foto olahraga $category',
+                    errorBuilder: (_, _, _) => _fallbackImage(),
+                  )
+                : Image.network(
+                    imageUrl!,
+                    fit: BoxFit.cover,
+                    semanticLabel: 'Foto postingan $category',
+                    errorBuilder: (_, _, _) => _fallbackImage(),
+                  ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -125,4 +129,11 @@ class FeedPostCard extends StatelessWidget {
       ),
     );
   }
+
+  Widget _fallbackImage() => const ColoredBox(
+    color: AppColors.background,
+    child: Center(
+      child: Icon(Icons.sports, color: AppColors.primary, size: 40),
+    ),
+  );
 }

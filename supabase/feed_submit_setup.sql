@@ -1,6 +1,6 @@
 begin;
 
-grant insert (club, initials, category, title, message, image_path, is_published)
+grant insert (club, initials, category, title, message, image_path, image_url, is_published)
 on public.feed_posts to anon, authenticated;
 
 drop policy if exists feed_submit_pending on public.feed_posts;
@@ -21,6 +21,29 @@ with check (
     'assets/images/cycling.jpg','assets/images/swimming.jpg',
     'assets/images/yoga.jpg','assets/images/pingpong.jpg'
   )
+  and (
+    image_url is null or
+    image_url like '%/storage/v1/object/public/feed-images/pending/%'
+  )
+);
+
+insert into storage.buckets (id, name, public)
+values ('feed-images', 'feed-images', true)
+on conflict (id) do nothing;
+
+drop policy if exists feed_images_read on storage.objects;
+create policy feed_images_read
+on storage.objects for select
+to anon, authenticated
+using (bucket_id = 'feed-images');
+
+drop policy if exists feed_images_upload on storage.objects;
+create policy feed_images_upload
+on storage.objects for insert
+to anon, authenticated
+with check (
+  bucket_id = 'feed-images'
+  and name like 'pending/%'
 );
 
 commit;

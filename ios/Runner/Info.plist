@@ -37,6 +37,8 @@
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>RECLUB memakai lokasi perangkat untuk menampilkan kegiatan olahraga di sekitar kamu.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>RECLUB memakai foto dari galeri untuk postingan Feed.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
