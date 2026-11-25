@@ -85,6 +85,50 @@ class DetailPositionSelectorSheet extends StatefulWidget {
     ),
   ];
 
+  // Role pemain voli
+  static const List<FutsalRoleOption> voliRoles = [
+    FutsalRoleOption(
+      name: 'Setter (Tosser)',
+      icon: Icons.sports_volleyball_rounded,
+    ),
+    FutsalRoleOption(
+      name: 'Outside Hitter (Spiker)',
+      icon: Icons.bolt_rounded,
+    ),
+    FutsalRoleOption(
+      name: 'Middle Blocker',
+      icon: Icons.shield_rounded,
+    ),
+    FutsalRoleOption(
+      name: 'Opposite Hitter',
+      icon: Icons.gps_fixed_rounded,
+    ),
+    FutsalRoleOption(
+      name: 'Libero',
+      icon: Icons.pan_tool_rounded,
+    ),
+    FutsalRoleOption(
+      name: 'All-Rounder',
+      icon: Icons.autorenew_rounded,
+    ),
+  ];
+
+  /// Mengembalikan daftar pilihan posisi untuk olahraga tim yang memiliki role.
+  /// Mengembalikan list kosong untuk olahraga yang tidak membutuhkan pemilihan posisi
+  /// (seperti Badminton, Tenis, Lari, Sepeda, Renang, Yoga, Pingpong).
+  static List<FutsalRoleOption> rolesForCategory(String category) {
+    return switch (category.trim().toLowerCase()) {
+      'sepak bola' || 'futsal' => futsalRoles,
+      'basket' => basketRoles,
+      'voli' || 'volleyball' => voliRoles,
+      _ => const [],
+    };
+  }
+
+  /// Apakah kategori olahraga ini memerlukan pemilihan posisi saat bergabung.
+  static bool hasRolesForCategory(String category) =>
+      rolesForCategory(category).isNotEmpty;
+
   @override
   State<DetailPositionSelectorSheet> createState() =>
       _DetailPositionSelectorSheetState();

@@ -30,20 +30,19 @@ class _DetailPageState extends State<DetailPage> {
   bool _isJoined = false;
   String _selectedRole = 'All-Rounder';
 
-    _SportDetailConfig get _config {
+  _SportDetailConfig get _config {
     final activity = widget.activity;
-    final isBasket = activity?.category.toLowerCase() == 'basket' ||
-        activity?.title == 'Basket Sore';
-
-    final base = isBasket
-        ? _SportDetailConfig.basket()
-        : _SportDetailConfig.futsal();
-
-    if (activity == null ||
-        activity.title == 'Fun Futsal Bareng' ||
-        activity.title == 'Basket Sore') {
-      return base;
+    if (activity == null || activity.title == 'Fun Futsal Bareng') {
+      return _SportDetailConfig.futsal();
     }
+    if (activity.title == 'Basket Sore') {
+      return _SportDetailConfig.basket();
+    }
+
+    final roles = DetailPositionSelectorSheet.rolesForCategory(
+      activity.category,
+    );
+    final preset = _presetForCategory(activity.category);
 
     return _SportDetailConfig(
       title: activity.title,
@@ -54,20 +53,174 @@ class _DetailPageState extends State<DetailPage> {
       timeGroup: activity.timeGroup == ActivityTimeGroup.weekend
           ? 'Weekend'
           : 'Weekday',
-      skillLevel: base.skillLevel,
-      courtType: 'Lapangan ${activity.category}',
+      skillLevel: 'Semua Level',
+      courtType: preset.courtType,
       schedule: '${activity.schedule} WIB',
       location: activity.location,
       venueAddress: activity.location,
-      fee: base.fee,
-      feeNote: base.feeNote,
-      quotaTitle: 'Kuota Pemain ${activity.category}',
+      fee: preset.fee,
+      feeNote: preset.feeNote,
+      quotaTitle: 'Kuota Peserta ${activity.category}',
       joinLabel: 'Ikut ${activity.category}',
-      capacity: activity.capacity > 0 ? activity.capacity : base.capacity,
-      description: base.description,
-      initialParticipants: base.initialParticipants,
-      roles: base.roles,
+      capacity: activity.capacity > 0 ? activity.capacity : preset.capacity,
+      description: preset.description,
+      initialParticipants: _initialParticipantsForCategory(
+        activity.category,
+        roles,
+        targetCount: activity.participants,
+      ),
+      roles: roles,
     );
+  }
+
+  _SportCategoryPreset _presetForCategory(String category) {
+    return switch (category.trim().toLowerCase()) {
+      'sepak bola' || 'futsal' => const _SportCategoryPreset(
+        courtType: 'Lapangan Vinyl Indoor',
+        fee: 'Rp45.000 / orang',
+        feeNote: 'Termasuk sewa lapangan, bola & rompi',
+        capacity: 12,
+        description:
+            'Sesi fun futsal & sepak bola terbuka untuk semua level pemain. '
+            'Rotasi tim dilakukan secara berkala agar semua peserta mendapat '
+            'waktu bermain yang adil.',
+      ),
+      'basket' => const _SportCategoryPreset(
+        courtType: 'Lapangan Basket Indoor / Outdoor',
+        fee: 'Rp50.000 / orang',
+        feeNote: 'Termasuk sewa lapangan, bola & rompi',
+        capacity: 12,
+        description:
+            'Sesi pick-up game basket seru untuk semua level! Sistem rotasi '
+            'per game agar semua pemain bisa tampil maksimal dan tetap fun.',
+      ),
+      'badminton' || 'bulutangkis' => const _SportCategoryPreset(
+        courtType: 'Lapangan Karpet Indoor',
+        fee: 'Rp35.000 / orang',
+        feeNote: 'Termasuk sewa lapangan & shuttlecock patungan',
+        capacity: 8,
+        description:
+            'Sesi mabar badminton santai hingga kompetitif untuk semua level. '
+            'Pasangan main bisa dirotasi setiap set agar semua peserta saling '
+            'bertemu di lapangan.',
+      ),
+      'voli' || 'volleyball' => const _SportCategoryPreset(
+        courtType: 'Lapangan Voli Indoor',
+        fee: 'Rp30.000 / orang',
+        feeNote: 'Termasuk sewa lapangan & bola voli',
+        capacity: 12,
+        description:
+            'Sesi latihan dan fun match voli bareng komunitas! Terbuka untuk '
+            'pemula maupun pemain berpengalaman dengan rotasi posisi yang rapi.',
+      ),
+      'tenis' || 'tennis' => const _SportCategoryPreset(
+        courtType: 'Hard Court Outdoor',
+        fee: 'Rp65.000 / orang',
+        feeNote: 'Termasuk sewa lapangan & bola tenis',
+        capacity: 6,
+        description:
+            'Sesi sparring dan rallying tenis santai bareng komunitas. '
+            'Bawa raket pribadi dan siap bermain single maupun double.',
+      ),
+      'pingpong' || 'tenis meja' => const _SportCategoryPreset(
+        courtType: 'Meja Indoor Standar ITTF',
+        fee: 'Rp25.000 / orang',
+        feeNote: 'Termasuk sewa meja & bola pingpong',
+        capacity: 8,
+        description:
+            'Sesi fun match pingpong dengan format rotasi cepat single dan '
+            'double. Cocok untuk mengasah refleks dan bersantai sepulang kerja.',
+      ),
+      'lari' || 'running' => const _SportCategoryPreset(
+        courtType: 'Lintasan Outdoor / Taman Kota',
+        fee: 'Gratis',
+        feeNote: 'Bawa botol minum & sepatu lari nyaman',
+        capacity: 15,
+        description:
+            'Sesi lari bareng komunitas dengan pembagian kelompok pace dari '
+            'pemula hingga pelari cepat. Dilengkapi pemanasan dan pendinginan '
+            'bersama.',
+      ),
+      'sepeda' || 'gowes' || 'cycling' => const _SportCategoryPreset(
+        courtType: 'Rute Jalan Kota / Car Free Day',
+        fee: 'Gratis',
+        feeNote: 'Wajib helm, lampu sepeda & botol minum',
+        capacity: 15,
+        description:
+            'Gowes bareng keliling kota dengan rute ramah semua jenis sepeda. '
+            'Dipandu Road Captain dan Sweeper agar rombongan tetap aman.',
+      ),
+      'renang' || 'swimming' => const _SportCategoryPreset(
+        courtType: 'Kolam Renang Standar 50m',
+        fee: 'Rp40.000 / orang',
+        feeNote: 'Tiket masuk kolam renang',
+        capacity: 8,
+        description:
+            'Sesi latihan renang pagi bareng untuk memperbaiki teknik napas, '
+            'stamina, dan gaya renang favoritmu bersama teman sekomunitas.',
+      ),
+      'yoga' => const _SportCategoryPreset(
+        courtType: 'Area Taman / Studio Matras',
+        fee: 'Rp35.000 / orang',
+        feeNote: 'Disarankan membawa matras yoga pribadi',
+        capacity: 10,
+        description:
+            'Sesi yoga untuk peregangan, kelenturan tubuh, dan relaksasi '
+            'pikiran. Cocok untuk pemula maupun praktisi rutin.',
+      ),
+      _ => _SportCategoryPreset(
+        courtType: 'Area $category',
+        fee: 'Gratis / Patungan',
+        feeNote: 'Info biaya dikonfirmasi di ruang chat komunitas',
+        capacity: 12,
+        description:
+            'Sesi $category bareng komunitas RECLUB. Terbuka untuk semua '
+            'level peserta yang ingin berolahraga dan menambah relasi baru.',
+      ),
+    };
+  }
+
+  List<FutsalParticipant> _initialParticipantsForCategory(
+    String category,
+    List<FutsalRoleOption> roles, {
+    required int targetCount,
+  }) {
+    String roleFor(int index) {
+      if (roles.isEmpty) return index == 0 ? 'Host' : 'Peserta';
+      return roles[index % roles.length].name;
+    }
+
+    if (targetCount <= 0) {
+      return [
+        FutsalParticipant(
+          name: 'Host Komunitas',
+          position: roleFor(0),
+          isHost: true,
+        ),
+      ];
+    }
+
+    const sampleNames = [
+      'Paulus Kassapa',
+      'Defrigo Pratama',
+      'Alex Wijaya',
+      'Joan Natasya',
+      'Rizky Ramadhan',
+      'Bagas Saputra',
+      'Kevin Sanjaya',
+      'Dimas Aditya',
+      'Nadia Putri',
+      'Fajar Pratama',
+    ];
+
+    final count = targetCount.clamp(1, sampleNames.length);
+    return List<FutsalParticipant>.generate(count, (index) {
+      return FutsalParticipant(
+        name: sampleNames[index],
+        position: roleFor(index),
+        isHost: index == 0,
+      );
+    });
   }
 
   IconData _iconForCategory(String category) {
@@ -108,6 +261,29 @@ class _DetailPageState extends State<DetailPage> {
     }
 
     if (_participants.length >= _config.capacity) return;
+
+    if (_config.roles.isEmpty) {
+      setState(() {
+        _participants.add(
+          const FutsalParticipant(
+            name: 'Daniel (Kamu)',
+            position: 'Peserta',
+          ),
+        );
+        _selectedRole = 'Peserta';
+        _isJoined = true;
+      });
+
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text('Kamu bergabung ke ${_config.title}!'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      return;
+    }
 
     final selectedPosition = await showModalBottomSheet<String>(
       context: context,
@@ -377,4 +553,20 @@ class _SportDetailConfig {
       ],
     );
   }
+}
+
+class _SportCategoryPreset {
+  const _SportCategoryPreset({
+    required this.courtType,
+    required this.fee,
+    required this.feeNote,
+    required this.capacity,
+    required this.description,
+  });
+
+  final String courtType;
+  final String fee;
+  final String feeNote;
+  final int capacity;
+  final String description;
 }

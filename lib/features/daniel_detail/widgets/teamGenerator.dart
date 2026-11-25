@@ -32,10 +32,6 @@ class TeamGenerator extends StatefulWidget {
   final int defaultPlayersPerTeam;
   final Random? random;
 
-  /// Mengacak [names] dengan Fisher-Yates Shuffle lalu membaginya secara merata
-  /// (round-robin) ke [teamCount] tim dengan batas maksimal [playersPerTeam] per tim.
-  ///
-  /// Kompleksitas Waktu: O(n), Kompleksitas Ruang: O(n) untuk n peserta.
   static TeamShuffleResult generateTeams({
     required List<String> names,
     required int teamCount,
