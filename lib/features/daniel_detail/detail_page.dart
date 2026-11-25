@@ -411,6 +411,7 @@ class _DetailPageState extends State<DetailPage> {
               fee: config.fee,
               feeNote: config.feeNote,
               quotaTitle: config.quotaTitle,
+              courtType: config.courtType,
               participantCount: participants.length,
               capacity: config.capacity,
               description: config.description,
