@@ -42,7 +42,12 @@ class RegistrationSummary extends StatelessWidget {
           _SummaryRow(label: 'Email', value: email),
           _SummaryRow(label: 'Kontak', value: phone),
           _SummaryRow(label: 'Jadwal', value: '${schedule.title}\n${schedule.label}'),
-          _SummaryRow(label: 'Lokasi', value: '${location.name}\n${location.address}'),
+          _SummaryRow(
+            label: 'Lokasi',
+            value: location.address.isEmpty
+                ? location.name
+                : '${location.name}\n${location.address}',
+          ),
           const Divider(height: 20),
           _SummaryRow(
             label: 'Total biaya',

@@ -12,12 +12,17 @@ Halaman siap dipanggil dari navigasi aplikasi tanpa mengubah `main.dart`:
 
 ```dart
 import 'package:reclub/features/alex_registration/registration_page.dart';
+import 'package:reclub/features/defrigo_manage_event/models/managed_event.dart';
 
 Navigator.of(context).push(
   MaterialPageRoute<void>(
-    builder: (_) => const RegistrationPage(),
+    builder: (_) => RegistrationPage(
+      event: event,
+      hostName: 'Nama penyelenggara',
+      fee: 0,
+    ),
   ),
 );
 ```
 
-Data kegiatan demo dapat disesuaikan melalui `activityName`, `hostName`, dan `fee`. Isi `fee` dengan `0` untuk kegiatan gratis atau nominal rupiah untuk kegiatan berbayar. Data jadwal dan lokasi saat ini berupa dummy di `registration_page.dart`.
+`event` memakai objek `ManagedEvent` dari kegiatan yang dipilih. Nama, kategori, deskripsi, tanggal, waktu, dan lokasi ditampilkan dari objek tersebut. Saat `event` tidak diberikan, halaman menggunakan data kegiatan demo. Nilai `fee` masih diberikan terpisah karena `ManagedEvent` belum menyimpan biaya.

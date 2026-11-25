@@ -73,8 +73,10 @@ class _LocationTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(location.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 3),
-                    Text(location.address, style: const TextStyle(color: AppColors.mutedText, fontSize: 12)),
+                    if (location.address.isNotEmpty) ...[
+                      const SizedBox(height: 3),
+                      Text(location.address, style: const TextStyle(color: AppColors.mutedText, fontSize: 12)),
+                    ],
                   ],
                 ),
               ),
