@@ -4,6 +4,7 @@ import '../../core/theme/app_colors.dart';
 import '../../defrigo_manage_event/models/managed_event.dart';
 import 'models/registration_event_type.dart';
 import 'models/registration_option.dart';
+import 'pages/registration_payment_page.dart';
 import 'widgets/confirmation_button.dart';
 import 'widgets/location_selector.dart';
 import 'widgets/participant_form.dart';
@@ -48,6 +49,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   late final TextEditingController _phoneController;
   int _selectedSchedule = 0;
   int _selectedLocation = 0;
+  late bool _hasPaid;
 
   RegistrationSchedule get _schedule => _availableSchedules[_selectedSchedule];
   RegistrationLocation get _location => _availableLocations[_selectedLocation];
@@ -56,7 +58,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
       : widget.fee > 0;
   bool get _canConfirm =>
       _isEligible &&
-      (widget.eventType == RegistrationEventType.clubOnly || widget.hasPaid);
+      (widget.eventType == RegistrationEventType.clubOnly || _hasPaid);
+  bool get _needsPayment =>
+      widget.eventType == RegistrationEventType.funMatch &&
+      widget.fee > 0 &&
+      !_hasPaid;
   int get _registrationFee =>
       widget.eventType == RegistrationEventType.clubOnly ? 0 : widget.fee;
   String get _confirmationLabel {
@@ -65,6 +71,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           ? 'Khusus anggota club'
           : 'Biaya belum ditentukan';
     }
+    if (_needsPayment) return 'Lanjut ke pembayaran';
     if (!_canConfirm) return 'Selesaikan pembayaran';
     return 'Konfirmasi pendaftaran';
   }
@@ -137,6 +144,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     _nameController = TextEditingController(text: widget.participantName);
     _emailController = TextEditingController(text: widget.participantEmail);
     _phoneController = TextEditingController(text: widget.participantPhone);
+    _hasPaid = widget.hasPaid;
     _nameController.addListener(_refreshSummary);
     _emailController.addListener(_refreshSummary);
     _phoneController.addListener(_refreshSummary);
@@ -212,7 +220,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
               fee: _registrationFee,
               eventType: widget.eventType,
               isClubMember: widget.isClubMember,
-              hasPaid: widget.hasPaid,
+              hasPaid: _hasPaid,
             ),
             const SizedBox(height: 12),
             RegistrationSummary(
@@ -226,7 +234,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             ),
             const SizedBox(height: 16),
             ConfirmationButton(
-              onPressed: _canConfirm ? _confirmRegistration : null,
+              onPressed: _isEligible ? _handlePrimaryAction : null,
               label: _confirmationLabel,
             ),
           ],
@@ -236,6 +244,29 @@ class _RegistrationPageState extends State<RegistrationPage> {
   }
 
   String _valueOrDash(String value) => value.trim().isEmpty ? '—' : value.trim();
+
+  Future<void> _handlePrimaryAction() async {
+    if (!_isEligible || !_formKey.currentState!.validate()) return;
+    FocusScope.of(context).unfocus();
+
+    if (_needsPayment) {
+      final paymentCompleted = await Navigator.of(context).push<bool>(
+        MaterialPageRoute<bool>(
+          builder: (_) => RegistrationPaymentPage(
+            activityName: widget.event?.name ?? widget.activityName,
+            fee: widget.fee,
+            schedule: _schedule.label,
+            location: _location.name,
+          ),
+        ),
+      );
+      if (!mounted || paymentCompleted != true) return;
+      setState(() => _hasPaid = true);
+      return;
+    }
+
+    _confirmRegistration();
+  }
 
   void _confirmRegistration() {
     if (!_canConfirm) return;
