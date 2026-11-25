@@ -4,7 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
-import '../paulus_home/home_page.dart';
+import '../auth/auth_gate.dart';
 
 class ReclubSplashScreen extends StatefulWidget {
   const ReclubSplashScreen({super.key});
@@ -37,7 +37,7 @@ class _ReclubSplashScreenState extends State<ReclubSplashScreen>
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
         PageRouteBuilder<void>(
-          pageBuilder: (_, _, _) => const HomePage(),
+          pageBuilder: (_, _, _) => const ReclubAuthGate(),
           transitionDuration: const Duration(milliseconds: 350),
           transitionsBuilder: (_, animation, _, child) =>
               FadeTransition(opacity: animation, child: child),

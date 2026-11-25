@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../auth/auth_page.dart';
+import '../auth/auth_service.dart';
 import 'models/profile_activity.dart';
 import 'widgets/activity_history_card.dart';
 import 'widgets/profile_edit_dialog.dart';
@@ -9,16 +12,32 @@ import 'widgets/profile_info_card.dart';
 import 'widgets/profile_tabs.dart';
 
 class JoanProfilePage extends StatefulWidget {
-  const JoanProfilePage({super.key});
+  const JoanProfilePage({
+    super.key,
+    this.initialName = 'Joan Pratama',
+    this.initialBio = 'Pecinta olahraga dan kenalan baru',
+    this.authActions,
+  });
+
+  final String initialName;
+  final String initialBio;
+  final AccountAuthActions? authActions;
 
   @override
   State<JoanProfilePage> createState() => _JoanProfilePageState();
 }
 
 class _JoanProfilePageState extends State<JoanProfilePage> {
-  String _name = 'Joan Pratama';
-  String _bio = 'Pecinta olahraga dan kenalan baru';
+  late String _name;
+  late String _bio;
   int _selectedTab = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _name = widget.initialName;
+    _bio = widget.initialBio;
+  }
 
   static final _activities = [
     ProfileActivity(
@@ -59,6 +78,29 @@ class _JoanProfilePageState extends State<JoanProfilePage> {
       builder: (_) => ProfileEditDialog(name: _name, bio: _bio),
     );
     if (result != null && result.$1.isNotEmpty && mounted) {
+      if (widget.authActions != null) {
+        try {
+          await widget.authActions!.updateProfile(
+            username: result.$1,
+            bio: result.$2,
+          );
+        } on AuthException catch (error) {
+          if (mounted) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(error.message)));
+          }
+          return;
+        } catch (_) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Profil gagal disimpan. Coba lagi.'),
+              ),
+            );
+          }
+          return;
+        }
+      }
       setState(() {
         _name = result.$1;
         _bio = result.$2;
@@ -82,6 +124,13 @@ class _JoanProfilePageState extends State<JoanProfilePage> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            tooltip: 'Keluar akun',
+            onPressed: _signOut,
+            icon: const Icon(Icons.logout_rounded),
+          ),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
@@ -141,5 +190,40 @@ class _JoanProfilePageState extends State<JoanProfilePage> {
         ],
       ),
     );
+  }
+
+  Future<void> _signOut() async {
+    final shouldSignOut = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Keluar dari RECLUB?'),
+        content: const Text('Kamu perlu masuk lagi untuk membuka akun.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Batal'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Keluar'),
+          ),
+        ],
+      ),
+    );
+    if (shouldSignOut != true || !mounted) return;
+
+    try {
+      await (widget.authActions ?? const SupabaseAccountAuth()).signOut();
+      if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute<void>(builder: (_) => const AuthPage()),
+        (_) => false,
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Gagal keluar. Coba lagi.')));
+    }
   }
 }

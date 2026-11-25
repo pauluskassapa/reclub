@@ -6,6 +6,7 @@ import '../defrigo_manage_event/pages/manage_event_page.dart';
 import 'data/managed_event_adapter.dart';
 import 'models/activity.dart';
 import '../daniel_detail/widgets/detail_community_chat.dart';
+import '../auth/auth_service.dart';
 import '../paulus_feed/feed_page.dart';
 import 'widgets/activity_location_filter.dart';
 import 'widgets/activity_time_filter.dart';
@@ -19,9 +20,10 @@ import 'widgets/sport_shortcut_section.dart';
 import '../joan_profile/profile_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, this.userName = 'Teman'});
+  const HomePage({super.key, this.userName = 'Teman', this.userBio = ''});
 
   final String userName;
+  final String userBio;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -230,7 +232,11 @@ class _HomePageState extends State<HomePage> {
                 Navigator.pop(sheetContext);
                 Navigator.of(context).push(
                   MaterialPageRoute<void>(
-                    builder: (_) => const JoanProfilePage(),
+                    builder: (_) => JoanProfilePage(
+                      initialName: widget.userName,
+                      initialBio: widget.userBio,
+                      authActions: const SupabaseAccountAuth(),
+                    ),
                   ),
                 );
               },
