@@ -17,7 +17,6 @@ import 'widgets/home_search_bar.dart';
 import 'widgets/popular_clubs_section.dart';
 import 'widgets/sport_shortcut_section.dart';
 import '../joan_profile/profile_page.dart';
-import '../joan_profile/profile_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, this.userName = 'Teman'});
