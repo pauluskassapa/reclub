@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-/// Model pesan untuk fitur Ruang Diskusi Komunitas (Club & Match Chat).
 class CommunityChatMessage {
   const CommunityChatMessage({
     required this.id,
@@ -41,8 +40,6 @@ class CommunityChatMessage {
   }
 }
 
-/// Service penghubung aplikasi dengan Supabase PostgreSQL REST API
-/// untuk komunikasi komunitas real-time dan sinkronisasi pesan.
 class SupabaseCommunityService {
   SupabaseCommunityService._();
 
