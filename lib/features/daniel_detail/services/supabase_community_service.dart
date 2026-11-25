@@ -47,9 +47,9 @@ class SupabaseCommunityService {
       SupabaseCommunityService._();
 
   /// Kredensial Project Supabase RECLUB
-  static const String supabaseUrl = 'https://vstoazgieqrsgzzniajz.supabase.co';
+  static const String supabaseUrl = 'https://akrxninlgfzxqanmlkfp.supabase.co';
   static const String supabasePublishableKey =
-      'sb_publishable_TYeej5IQa7OKOCbzrWMiXw_yodlijhE';
+      'sb_publishable_BX1q8duJP9b0jcbw_sSC4g_nQkd1is0';
 
   static const String _tableName = 'community_messages';
 
