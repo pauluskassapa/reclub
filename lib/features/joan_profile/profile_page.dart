@@ -17,11 +17,13 @@ class JoanProfilePage extends StatefulWidget {
     this.initialName = 'Joan Pratama',
     this.initialBio = 'Pecinta olahraga dan kenalan baru',
     this.authActions,
+    this.isGuest = false,
   });
 
   final String initialName;
   final String initialBio;
   final AccountAuthActions? authActions;
+  final bool isGuest;
 
   @override
   State<JoanProfilePage> createState() => _JoanProfilePageState();
@@ -125,11 +127,14 @@ class _JoanProfilePageState extends State<JoanProfilePage> {
         ),
         centerTitle: true,
         actions: [
-          IconButton(
-            tooltip: 'Keluar akun',
-            onPressed: _signOut,
-            icon: const Icon(Icons.logout_rounded),
-          ),
+          if (widget.isGuest)
+            TextButton(onPressed: _openAuth, child: const Text('Masuk'))
+          else
+            IconButton(
+              tooltip: 'Keluar akun',
+              onPressed: _signOut,
+              icon: const Icon(Icons.logout_rounded),
+            ),
         ],
       ),
       body: ListView(
@@ -143,7 +148,14 @@ class _JoanProfilePageState extends State<JoanProfilePage> {
             sportCount: _sportCount,
           ),
           const SizedBox(height: 16),
-          ProfileEditMenu(onEdit: _editProfile),
+          if (widget.isGuest)
+            OutlinedButton.icon(
+              onPressed: _openAuth,
+              icon: const Icon(Icons.person_add_alt_1_rounded),
+              label: const Text('Masuk atau daftar untuk mengedit profil'),
+            )
+          else
+            ProfileEditMenu(onEdit: _editProfile),
           const SizedBox(height: 26),
           ProfileTabs(
             selectedIndex: _selectedTab,
@@ -225,5 +237,12 @@ class _JoanProfilePageState extends State<JoanProfilePage> {
         context,
       ).showSnackBar(const SnackBar(content: Text('Gagal keluar. Coba lagi.')));
     }
+  }
+
+  void _openAuth() {
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute<void>(builder: (_) => const AuthPage()),
+      (_) => false,
+    );
   }
 }

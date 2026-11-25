@@ -6,10 +6,16 @@ import '../paulus_home/home_page.dart';
 import 'auth_service.dart';
 
 class AuthPage extends StatefulWidget {
-  const AuthPage({super.key, this.authActions, this.onAuthenticated});
+  const AuthPage({
+    super.key,
+    this.authActions,
+    this.onAuthenticated,
+    this.onContinueAsGuest,
+  });
 
   final AccountAuthActions? authActions;
   final ValueChanged<AuthenticatedAccount>? onAuthenticated;
+  final VoidCallback? onContinueAsGuest;
 
   @override
   State<AuthPage> createState() => _AuthPageState();
@@ -132,6 +138,21 @@ class _AuthPageState extends State<AuthPage> {
       MaterialPageRoute<void>(
         builder: (_) =>
             HomePage(userName: account.username, userBio: account.bio),
+      ),
+      (_) => false,
+    );
+  }
+
+  void _continueAsGuest() {
+    FocusScope.of(context).unfocus();
+    final onContinueAsGuest = widget.onContinueAsGuest;
+    if (onContinueAsGuest != null) {
+      onContinueAsGuest();
+      return;
+    }
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute<void>(
+        builder: (_) => const HomePage(userName: 'Tamu', isGuest: true),
       ),
       (_) => false,
     );
@@ -445,6 +466,22 @@ class _AuthPageState extends State<AuthPage> {
                                   ),
                                 ),
                               ],
+                            ),
+                            const SizedBox(height: 2),
+                            OutlinedButton.icon(
+                              onPressed: _isLoading ? null : _continueAsGuest,
+                              icon: const Icon(Icons.explore_outlined),
+                              label: const Text('Lanjutkan sebagai tamu'),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: AppColors.primary,
+                                side: const BorderSide(
+                                  color: AppColors.primary,
+                                ),
+                                minimumSize: const Size.fromHeight(48),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                              ),
                             ),
                           ],
                         ),

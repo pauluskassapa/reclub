@@ -22,10 +22,16 @@ import 'widgets/sport_shortcut_section.dart';
 import '../joan_profile/profile_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, this.userName = 'Teman', this.userBio = ''});
+  const HomePage({
+    super.key,
+    this.userName = 'Teman',
+    this.userBio = '',
+    this.isGuest = false,
+  });
 
   final String userName;
   final String userBio;
+  final bool isGuest;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -246,7 +252,10 @@ class _HomePageState extends State<HomePage> {
                     builder: (_) => JoanProfilePage(
                       initialName: widget.userName,
                       initialBio: widget.userBio,
-                      authActions: const SupabaseAccountAuth(),
+                      isGuest: widget.isGuest,
+                      authActions: widget.isGuest
+                          ? null
+                          : const SupabaseAccountAuth(),
                     ),
                   ),
                 );

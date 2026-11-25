@@ -113,4 +113,17 @@ void main() {
       expect(authenticatedAs?.bio, 'Voli');
     },
   );
+
+  testWidgets('guest action opens Home without an account', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(home: AuthPage(authActions: FakeAccountAuth())),
+    );
+
+    await tester.ensureVisible(find.text('Lanjutkan sebagai tamu'));
+    await tester.tap(find.text('Lanjutkan sebagai tamu'));
+    await tester.pumpAndSettle(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(find.text('Hai, Tamu'), findsOneWidget);
+  });
 }
