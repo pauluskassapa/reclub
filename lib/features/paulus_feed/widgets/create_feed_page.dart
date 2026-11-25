@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../services/feed_service.dart';
 
@@ -18,6 +21,7 @@ class _CreateFeedPageState extends State<CreateFeedPage> {
   String _category = 'Futsal';
   bool _sending = false;
   String? _error;
+  XFile? _selectedImage;
 
   static const images = {
     'Futsal': 'assets/images/futsal.jpg',
@@ -54,6 +58,7 @@ class _CreateFeedPageState extends State<CreateFeedPage> {
         title: _title.text.trim(),
         message: _message.text.trim(),
         imagePath: images[_category]!,
+        image: _selectedImage,
       );
       if (mounted) Navigator.pop(context, true);
     } catch (_) {
@@ -63,6 +68,15 @@ class _CreateFeedPageState extends State<CreateFeedPage> {
         _error = 'Pengiriman belum dapat dikonfirmasi. Cek koneksi dan hubungi pengelola sebelum mengirim ulang.';
       });
     }
+  }
+
+  Future<void> _pickImage() async {
+    final image = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1600,
+      imageQuality: 85,
+    );
+    if (image != null && mounted) setState(() => _selectedImage = image);
   }
 
   Widget _field(
@@ -124,14 +138,50 @@ class _CreateFeedPageState extends State<CreateFeedPage> {
               const SizedBox(height: 16),
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  images[_category]!,
-                  height: 160,
-                  fit: BoxFit.cover,
-                ),
+                child: _selectedImage == null
+                    ? Image.asset(
+                        images[_category]!,
+                        height: 160,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      )
+                    : FutureBuilder<Uint8List>(
+                        future: _selectedImage!.readAsBytes(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return const SizedBox(
+                              height: 160,
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          }
+                          return Image.memory(
+                            snapshot.data!,
+                            height: 160,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      ),
               ),
               const SizedBox(height: 8),
-              const Text('Foto ilustrasi sesuai olahraga yang dipilih.'),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _selectedImage == null
+                          ? 'Foto ilustrasi sesuai olahraga yang dipilih.'
+                          : 'Foto dari galeri akan dipakai untuk postingan.',
+                    ),
+                  ),
+                  TextButton.icon(
+                    onPressed: _sending ? null : _pickImage,
+                    icon: const Icon(Icons.photo_library_outlined),
+                    label: Text(
+                      _selectedImage == null ? 'Pilih foto' : 'Ganti foto',
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 16),
               _field(_title, 'Judul', 120),
               _field(_message, 'Isi postingan', 2000, lines: 5),
