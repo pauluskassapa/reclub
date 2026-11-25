@@ -85,7 +85,6 @@ class DetailPositionSelectorSheet extends StatefulWidget {
     ),
   ];
 
-  // Role pemain voli
   static const List<FutsalRoleOption> voliRoles = [
     FutsalRoleOption(
       name: 'Setter (Tosser)',
@@ -113,9 +112,6 @@ class DetailPositionSelectorSheet extends StatefulWidget {
     ),
   ];
 
-  /// Mengembalikan daftar pilihan posisi untuk olahraga tim yang memiliki role.
-  /// Mengembalikan list kosong untuk olahraga yang tidak membutuhkan pemilihan posisi
-  /// (seperti Badminton, Tenis, Lari, Sepeda, Renang, Yoga, Pingpong).
   static List<FutsalRoleOption> rolesForCategory(String category) {
     return switch (category.trim().toLowerCase()) {
       'sepak bola' || 'futsal' => futsalRoles,
@@ -125,7 +121,6 @@ class DetailPositionSelectorSheet extends StatefulWidget {
     };
   }
 
-  /// Apakah kategori olahraga ini memerlukan pemilihan posisi saat bergabung.
   static bool hasRolesForCategory(String category) =>
       rolesForCategory(category).isNotEmpty;
 

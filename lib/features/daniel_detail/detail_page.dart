@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../paulus_home/models/activity.dart';
+import 'services/supabase_participant_service.dart';
 import 'widgets/detail_position_selector.dart';
 import 'widgets/detail_activity_info.dart';
 import 'widgets/detail_category_chips.dart';
@@ -24,11 +25,44 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
+  static const String _currentUserName = 'Daniel (Kamu)';
+
   List<FutsalParticipant>? _participantsList;
 
   bool _isFavorite = false;
   bool _isJoined = false;
   String _selectedRole = 'All-Rounder';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadParticipants();
+  }
+
+  Future<void> _loadParticipants() async {
+    final config = _config;
+    final loaded = await SupabaseParticipantService.instance.fetchParticipants(
+      activityTitle: config.title,
+      seedParticipants: config.initialParticipants,
+    );
+    if (!mounted) return;
+
+    FutsalParticipant? currentUser;
+    for (final participant in loaded) {
+      if (participant.name == _currentUserName) {
+        currentUser = participant;
+        break;
+      }
+    }
+
+    setState(() {
+      _participantsList = loaded;
+      _isJoined = currentUser != null;
+      if (currentUser != null) {
+        _selectedRole = currentUser.position;
+      }
+    });
+  }
 
   _SportDetailConfig get _config {
     final activity = widget.activity;
@@ -243,66 +277,59 @@ class _DetailPageState extends State<DetailPage> {
       );
 
   Future<void> _toggleJoinActivity() async {
+    final config = _config;
+
     if (_isJoined) {
       setState(() {
-        _participants.removeWhere((p) => p.name == 'Daniel (Kamu)');
+        _participants.removeWhere((p) => p.name == _currentUserName);
         _isJoined = false;
       });
 
+      final deletedInCloud =
+          await SupabaseParticipantService.instance.leaveActivity(
+        activityTitle: config.title,
+        participantName: _currentUserName,
+      );
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
-            content: Text('Keikutsertaan ${_config.title} dibatalkan.'),
+            content: Text(
+              deletedInCloud
+                  ? 'Keikutsertaan ${config.title} dibatalkan (diperbarui di database).'
+                  : 'Keikutsertaan ${config.title} dibatalkan.',
+            ),
             behavior: SnackBarBehavior.floating,
           ),
         );
       return;
     }
 
-    if (_participants.length >= _config.capacity) return;
+    if (_participants.length >= config.capacity) return;
 
-    if (_config.roles.isEmpty) {
-      setState(() {
-        _participants.add(
-          const FutsalParticipant(
-            name: 'Daniel (Kamu)',
-            position: 'Peserta',
-          ),
-        );
-        _selectedRole = 'Peserta';
-        _isJoined = true;
-      });
-
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(
-            content: Text('Kamu bergabung ke ${_config.title}!'),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      return;
+    String selectedPosition = 'Peserta';
+    if (config.roles.isNotEmpty) {
+      final picked = await showModalBottomSheet<String>(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (_) => DetailPositionSelectorSheet(
+          participants: _participants,
+          roleOptions: config.roles,
+          activityTitle: config.title,
+          headerIcon: config.sportIcon,
+        ),
+      );
+      if (picked == null || !mounted) return;
+      selectedPosition = picked;
     }
-
-    final selectedPosition = await showModalBottomSheet<String>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => DetailPositionSelectorSheet(
-        participants: _participants,
-        roleOptions: _config.roles,
-        activityTitle: _config.title,
-        headerIcon: _config.sportIcon,
-      ),
-    );
-
-    if (selectedPosition == null || !mounted) return;
 
     setState(() {
       _participants.add(
         FutsalParticipant(
-          name: 'Daniel (Kamu)',
+          name: _currentUserName,
           position: selectedPosition,
         ),
       );
@@ -310,12 +337,24 @@ class _DetailPageState extends State<DetailPage> {
       _isJoined = true;
     });
 
+    final savedInCloud = await SupabaseParticipantService.instance.joinActivity(
+      activityTitle: config.title,
+      category: config.category,
+      participantName: _currentUserName,
+      position: selectedPosition,
+    );
+    if (!mounted) return;
+
+    final roleSuffix =
+        config.roles.isNotEmpty ? ' sebagai $selectedPosition' : '';
+    final syncNote = savedInCloud ? ' (tersimpan di database)' : '';
+
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
           content: Text(
-            'Kamu bergabung ke ${_config.title} sebagai $selectedPosition!',
+            'Kamu bergabung ke ${config.title}$roleSuffix!$syncNote',
           ),
           behavior: SnackBarBehavior.floating,
         ),
