@@ -8,10 +8,14 @@ create table if not exists public.feed_posts (
   title text not null,
   message text not null,
   image_path text not null,
+  image_url text,
   likes integer not null default 0 check (likes >= 0),
   is_published boolean not null default true,
   created_at timestamptz not null default now()
 );
+
+alter table public.feed_posts
+add column if not exists image_url text;
 
 alter table public.feed_posts enable row level security;
 

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
 import '../../daniel_detail/services/supabase_community_service.dart';
 import '../models/feed_post.dart';
@@ -13,8 +14,7 @@ class FeedService {
         Uri.parse('${SupabaseCommunityService.supabaseUrl}/rest/v1/feed_posts')
             .replace(
               queryParameters: {
-                'select':
-                    'id,club,initials,category,title,message,image_path,likes',
+                'select': 'id,club,initials,category,title,message,image_path,image_url,likes',
                 'order': 'created_at.desc,id.asc',
                 'limit': '100',
               },
@@ -43,6 +43,7 @@ class FeedService {
     required String title,
     required String message,
     required String imagePath,
+    XFile? image,
   }) async {
     if (club.trim().isEmpty ||
         club.length > 80 ||
@@ -59,6 +60,7 @@ class FeedService {
         .map((word) => String.fromCharCode(word.runes.first))
         .join()
         .toUpperCase();
+    final imageUrl = image == null ? null : await _uploadImage(image);
     final response = await http
         .post(
           Uri.parse(
@@ -76,6 +78,7 @@ class FeedService {
             'title': title.trim(),
             'message': message.trim(),
             'image_path': imagePath,
+            'image_url': imageUrl,
             'is_published': false,
           }),
         )
@@ -84,4 +87,41 @@ class FeedService {
       throw Exception('Post submission failed: ${response.statusCode}');
     }
   }
+
+  Future<String> _uploadImage(XFile image) async {
+    final extension = image.name.contains('.')
+        ? image.name.split('.').last.toLowerCase()
+        : 'jpg';
+    const validExtensions = {'jpg', 'jpeg', 'png', 'webp'};
+    if (!validExtensions.contains(extension)) {
+      throw ArgumentError('Format foto harus JPG, PNG, atau WEBP.');
+    }
+    final fileName =
+        'pending/${DateTime.now().microsecondsSinceEpoch}.$extension';
+    final upload = await http
+        .post(
+          Uri.parse(
+            '${SupabaseCommunityService.supabaseUrl}/storage/v1/object/feed-images/$fileName',
+          ),
+          headers: {
+            'apikey': SupabaseCommunityService.supabasePublishableKey,
+            'Authorization':
+                'Bearer ${SupabaseCommunityService.supabasePublishableKey}',
+            'Content-Type': _contentType(extension),
+            'x-upsert': 'false',
+          },
+          body: await image.readAsBytes(),
+        )
+        .timeout(const Duration(seconds: 20));
+    if (upload.statusCode != 200 && upload.statusCode != 201) {
+      throw Exception('Image upload failed: ${upload.statusCode}');
+    }
+    return '${SupabaseCommunityService.supabaseUrl}/storage/v1/object/public/feed-images/$fileName';
+  }
+
+  String _contentType(String extension) => switch (extension) {
+    'png' => 'image/png',
+    'webp' => 'image/webp',
+    _ => 'image/jpeg',
+  };
 }

@@ -34,7 +34,11 @@ Pengajuan tidak tampil di API publik. Daniel membuka Table Editor → feed_posts
 memeriksa isi lalu mengubah is_published menjadi true untuk menyetujui.
 Nama pengirim adalah input pengguna, belum identitas akun terverifikasi.
 Aplikasi tidak memiliki izin mengubah atau menghapus postingan.
-Foto memakai aset bawaan. Belum mendukung unggah foto.
+
+Form juga dapat memakai foto dari galeri. Jalankan `feed_submit_setup.sql`
+setelah `feed_setup.sql`: SQL tersebut membuat bucket publik `feed-images`
+dan membatasi unggahan anonim ke folder `pending/`. Foto yang dipilih akan
+tampil setelah postingan disetujui.
 
 Alur ini untuk demo kelompok. Sebelum dibuka luas, hubungkan Supabase Auth
 serta pembatasan pengiriman untuk mencegah spam pengajuan anonim.

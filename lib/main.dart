@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/theme/app_colors.dart';
+import 'features/daniel_detail/services/supabase_community_service.dart';
 import 'features/splash/splash_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(
+    url: SupabaseCommunityService.supabaseUrl,
+    publishableKey: SupabaseCommunityService.supabasePublishableKey,
+  );
   runApp(const ReclubApp());
 }
 

@@ -19,10 +19,45 @@ class ProfileEditMenu extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Row(
             children: [
-              Container(width: 42, height: 42, decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(14)), child: const Icon(Icons.edit_outlined, color: AppColors.primary)),
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Icon(
+                  Icons.edit_outlined,
+                  color: AppColors.primary,
+                ),
+              ),
               const SizedBox(width: 12),
-              const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Edit profil', style: TextStyle(color: AppColors.text, fontWeight: FontWeight.bold, fontSize: 16)), Text('Perbarui nama dan informasi kamu', style: TextStyle(color: AppColors.mutedText, fontSize: 13))])),
-              const Icon(Icons.chevron_right_rounded, color: AppColors.mutedText),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Edit profil',
+                      style: TextStyle(
+                        color: AppColors.text,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      'Perbarui nama dan informasi kamu',
+                      style: TextStyle(
+                        color: AppColors.mutedText,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(
+                Icons.chevron_right_rounded,
+                color: AppColors.mutedText,
+              ),
             ],
           ),
         ),

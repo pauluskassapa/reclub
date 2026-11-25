@@ -14,7 +14,11 @@ class ProfileAvatar extends StatelessWidget {
       backgroundColor: AppColors.primary.withValues(alpha: 0.14),
       child: Text(
         name.trim().isEmpty ? '?' : name.trim()[0].toUpperCase(),
-        style: const TextStyle(color: AppColors.primary, fontSize: 34, fontWeight: FontWeight.bold),
+        style: const TextStyle(
+          color: AppColors.primary,
+          fontSize: 34,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
